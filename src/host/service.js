@@ -553,8 +553,10 @@ export class InterpretService {
     const mode = this.config.liveAsrMode || 'balanced'
     for (const track of ['mic', 'system']) {
       let text = ''
-      if (mode !== 'accurate' && this.streamingReady) {
+      if (mode !== 'accurate' && this.streamingReady && this.live[track]?.engine !== 'parakeet-rolling') {
         text = this.streaming.poll(track)
+      } else if (this.streamingReady) {
+        this.streaming.poll(track)
       }
       if (text && isLiveEnglish(text)) {
         let corrections = []
