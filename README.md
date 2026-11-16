@@ -14,7 +14,7 @@ DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解
 
 本项目是**单插件自包含发布**，不需要安装 dsh-asr-plugin 或其他外部 DSH 插件。
 
-### 内置组件
+### 内置组件（插件内置，不需要外部安装）
 
 - **系统音频采集 helper**：来自 Apache-2.0 的 @huliux/dsh-asr-plugin，已随插件分发在 assets/system-audio；
 - **Silero VAD 模型**：已内置在 assets/models，不需要单独下载；
