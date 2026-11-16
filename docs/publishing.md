@@ -1,6 +1,6 @@
 # 发布到 GitHub
 
-仓库内所有 `<owner>` 都是占位符，发布前替换为实际 GitHub 用户名或组织名：
+仓库内所有 `YOUR_GITHUB` 都是占位符，发布前替换为实际 GitHub 用户名或组织名：
 
 - README.md
 - package.json
@@ -10,7 +10,7 @@
 
 ```bash
 # 在 GitHub 创建空仓库后
-git remote add origin https://github.com/<owner>/dsh-interpret.git
+git remote add origin https://github.com/YOUR_GITHUB/dsh-interpret.git
 git branch -M main
 git push -u origin main
 ```
@@ -50,7 +50,7 @@ Release 工作流会自动：
 
 ## 5. 发布前检查
 
-- [ ] 所有 `<owner>` 已替换；
+- [ ] 所有 `YOUR_GITHUB` 已替换；
 - [ ] README 的“重要声明”五条平台前提仍在；
 - [ ] LICENSE / THIRD_PARTY_NOTICES 完整；
 - [ ] 没有提交 .models、logs、tgz、node_modules；

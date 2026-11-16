@@ -11,7 +11,7 @@
 ## 从源码安装
 
 ```bash
-git clone https://github.com/<owner>/dsh-interpret.git
+git clone https://github.com/YOUR_GITHUB/dsh-interpret.git
 cd dsh-interpret
 pnpm install
 pnpm build
