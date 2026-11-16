@@ -63,18 +63,18 @@ DeepSeek Harness 的本地插件：把现场英文讲解（麦克风）或电脑
 
 ## API
 
-同源接口前缀 /interpret/api：/state、/events（SSE）、/session/start、/session/stop、/audio/mic、/audio/system、/prepare、/prepare/cancel、/models、/models/vad/prepare、/models/streaming/prepare、/terminology/stats、/terminology/search、/translate、/config、/glossary、/sessions、/sessions/:id、/export、/client-ready。健康检查 /interpret/api/health。
+同源接口前缀 /interpret/api：/state、/events（SSE）、/session/start、/session/stop、/audio/mic、/audio/system、/prepare、/prepare/cancel、/models、/models/vad/prepare、/models/streaming/prepare、/terminology/stats、/terminology/search、/translate、/config、/glossary、/sessions、/sessions/:id、/export、/client-ready、/session/reset、/reader/files、/reader/files/:id、/reader/files/:id/raw、/reader/files/:id/html。健康检查 /interpret/api/health。
 
 ## 已知限制
 
 - 逐词流式英文（约 160–320ms 更新）+ Parakeet 定稿复核；实时行是 provisional，句尾会替换为校正后的定稿。
 - 术语库当前约 3,050 条，8 学科；中文名 280 条、UK/US 音标 1,554 条。Wikipedia 分类扩展和批量中文补全受 API 限流影响，可后续用 EXPAND_CATEGORIES=1 / FETCH_LANG=1 重跑构建脚本。
 - 术语 RAG 的实时纠正只使用高置信别名/人工误听表；完整 LLM 校正只发生在定稿，避免实时行抖动和误改。
-- 系统音频依赖 dsh-asr-plugin 的采集助手与 macOS 屏幕/系统音频权限；没有该插件时仅麦克风可用。
+- 系统音频使用插件内置的签名采集助手，只需要 macOS 屏幕/系统音频权限；不再依赖 dsh-asr-plugin。
 - 说话人标签、CAIT 直接写入、Agent 操作工具尚未实现；当前用 Markdown/SRT 交接给 CAIT/其他工具。
-- 首次下载模型需要网络；模型权重不随插件分发。
+- 首次下载 Parakeet/流式模型需要网络；Silero VAD 已内置。除 sherpa-onnx-node npm 依赖外，不需要其他 DSH 插件或系统 Python 包。
 - 本机 UI 的最终视觉验证需要插件在 DSH 中实际加载后完成（见 docs/acceptance.md）。
 
 ## 许可
 
-插件自有代码 MIT。运行时可选依赖 @huliux/dsh-asr-plugin 的采集助手（Apache-2.0 / 上游 BSD-2-Clause）；Parakeet 与 SenseVoice 模型权重由用户从 Hugging Face 下载，遵守各自许可。详见 THIRD_PARTY_NOTICES.md。
+插件自有代码 MIT。内置的采集助手来自 @huliux/dsh-asr-plugin（Apache-2.0 / 上游 BSD-2-Clause），许可文本见 assets/system-audio；Parakeet 与流式模型权重由用户从 Hugging Face 下载，遵守各自许可。详见 THIRD_PARTY_NOTICES.md。
