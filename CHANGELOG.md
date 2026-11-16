@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.2 — 2026-11-17
+
+### Fixed
+
+- 讲义阅读器彻底移除 python-docx、openpyxl、lxml 等第三方 Python 依赖。
+- DOCX、XLSX、PPTX 改用 DSH 自带 Python 的 zipfile + ElementTree 标准库解析。
+- 不再依赖 Python ABI、wheel 或 PYTHONPATH；Windows 无系统 Python 也可打开 Office 文件。
+- `.doc` 保留 Word/LibreOffice/antiword 转换与 word-extractor 纯 JS 兜底。
+
 ## 1.1.1 — 2026-11-17
 
 ### Fixed

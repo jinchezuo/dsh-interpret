@@ -2,6 +2,7 @@
 """Render an uploaded handout to a self-contained, script-free HTML page."""
 import argparse
 import base64
+from datetime import datetime, timedelta
 import html
 import mimetypes
 import os
@@ -49,62 +50,213 @@ def data_uri(blob, filename):
     mime = mimetypes.guess_type(filename or "")[0] or "application/octet-stream"
     return "data:" + mime + ";base64," + base64.b64encode(blob).decode("ascii")
 
+W_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+R_NS = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
+S_NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+
+def docx_text(node):
+    pieces = []
+    for child in node.iter():
+        if child.tag == W_NS + "t" and child.text:
+            pieces.append(child.text)
+        elif child.tag == W_NS + "tab":
+            pieces.append("\t")
+        elif child.tag == W_NS + "br":
+            pieces.append("\n")
+    return "".join(pieces)
+
+def docx_paragraph(paragraph):
+    text = docx_text(paragraph).strip()
+    if not text:
+        return ""
+    style_node = paragraph.find("./" + W_NS + "pPr/" + W_NS + "pStyle")
+    style = (style_node.attrib.get(W_NS + "val", "") if style_node is not None else "").lower()
+    if style.startswith("heading1") or style == "title":
+        return "<h1>" + esc(text) + "</h1>"
+    if style.startswith("heading2"):
+        return "<h2>" + esc(text) + "</h2>"
+    if style.startswith("heading"):
+        return "<h3>" + esc(text) + "</h3>"
+    return "<p>" + esc(text) + "</p>"
+
+def docx_table(table):
+    rows = []
+    for row in table.findall(W_NS + "tr"):
+        cells = []
+        for cell in row.findall(W_NS + "tc"):
+            texts = [docx_text(p).strip() for p in cell.findall(W_NS + "p")]
+            cells.append("<td>" + esc("\n".join(item for item in texts if item)) + "</td>")
+        if cells:
+            rows.append("<tr>" + "".join(cells) + "</tr>")
+    return ("<table>" + "".join(rows) + "</table>") if rows else ""
+
 def render_docx(path):
-    from docx import Document
-    doc = Document(path)
-    parts = []
-    for paragraph in doc.paragraphs:
-        text = paragraph.text.strip()
-        if not text:
-            continue
-        style = (paragraph.style.name or "").lower()
-        if style.startswith("heading 1") or style == "title":
-            parts.append("<h1>" + esc(text) + "</h1>")
-        elif style.startswith("heading 2"):
-            parts.append("<h2>" + esc(text) + "</h2>")
-        elif style.startswith("heading"):
-            parts.append("<h3>" + esc(text) + "</h3>")
-        else:
-            parts.append("<p>" + esc(text) + "</p>")
-    for table in doc.tables:
-        rows = []
-        for row in table.rows:
-            cells = "<td>" + "</td><td>".join(esc(cell.text) for cell in row.cells) + "</td>"
-            rows.append("<tr>" + cells + "</tr>")
-        if rows:
-            parts.append("<table>" + "".join(rows) + "</table>")
-    for rel in doc.part.rels.values():
-        if "image" not in rel.reltype:
-            continue
-        try:
-            blob = rel.target_part.blob
-            if len(blob) > 10 * 1024 * 1024:
-                continue
-            parts.append('<img alt="文档图片" src="' + data_uri(blob, str(rel.target_part.partname)) + '">')
-        except Exception:
-            pass
+    with zipfile.ZipFile(path) as archive:
+        root = ET.fromstring(archive.read("word/document.xml"))
+        body = root.find(W_NS + "body")
+        parts = []
+        if body is not None:
+            for child in list(body):
+                if child.tag == W_NS + "p":
+                    parts.append(docx_paragraph(child))
+                elif child.tag == W_NS + "tbl":
+                    parts.append(docx_table(child))
+                elif child.tag == W_NS + "sdt":
+                    for nested in child.iter(W_NS + "p"):
+                        parts.append(docx_paragraph(nested))
+        rels_path = "word/_rels/document.xml.rels"
+        names = set(archive.namelist())
+        if rels_path in names:
+            try:
+                rels = ET.fromstring(archive.read(rels_path))
+                for rel in rels:
+                    if not rel.attrib.get("Type", "").endswith("/image"):
+                        continue
+                    target = rel.attrib.get("Target", "")
+                    name = target.lstrip("/") if target.startswith("/") else posixpath.normpath(posixpath.join("word", target))
+                    if name not in names:
+                        continue
+                    blob = archive.read(name)
+                    if len(blob) <= 10 * 1024 * 1024:
+                        parts.append('<img alt="文档图片" src="' + data_uri(blob, name) + '">')
+            except Exception:
+                pass
     return "".join(parts) or "<p>文档没有可提取的文字。</p>"
 
+def xlsx_shared_strings(archive):
+    if "xl/sharedStrings.xml" not in archive.namelist():
+        return []
+    root = ET.fromstring(archive.read("xl/sharedStrings.xml"))
+    values = []
+    for item in root.findall(S_NS + "si"):
+        values.append("".join(node.text or "" for node in item.iter(S_NS + "t")))
+    return values
+
+def xlsx_sheets(archive):
+    names = set(archive.namelist())
+    rels = {}
+    rels_path = "xl/_rels/workbook.xml.rels"
+    if rels_path in names:
+        try:
+            root = ET.fromstring(archive.read(rels_path))
+            for rel in root:
+                rels[rel.attrib.get("Id", "")] = rel.attrib.get("Target", "")
+        except Exception:
+            pass
+    sheets = []
+    if "xl/workbook.xml" in names:
+        try:
+            root = ET.fromstring(archive.read("xl/workbook.xml"))
+            container = root.find(S_NS + "sheets")
+            if container is not None:
+                for sheet in container.findall(S_NS + "sheet"):
+                    target = rels.get(sheet.attrib.get(R_NS + "id", ""), "")
+                    if target:
+                        path = target.lstrip("/") if target.startswith("/") else posixpath.normpath(posixpath.join("xl", target))
+                        if path in names:
+                            sheets.append((sheet.attrib.get("name", "Sheet"), path))
+        except Exception:
+            pass
+    if not sheets:
+        for name in sorted(names):
+            if re.match(r"xl/worksheets/sheet\d+\.xml$", name):
+                sheets.append((posixpath.basename(name), name))
+    return sheets
+
+def xlsx_date_styles(archive):
+    if "xl/styles.xml" not in archive.namelist():
+        return set()
+    root = ET.fromstring(archive.read("xl/styles.xml"))
+    custom = {}
+    formats = root.find(S_NS + "numFmts")
+    if formats is not None:
+        for item in formats.findall(S_NS + "numFmt"):
+            custom[int(item.attrib.get("numFmtId", "0"))] = item.attrib.get("formatCode", "")
+    dates = set()
+    xfs = root.find(S_NS + "cellXfs")
+    if xfs is not None:
+        for index, xf in enumerate(xfs.findall(S_NS + "xf")):
+            fmt_id = int(xf.attrib.get("numFmtId", "0"))
+            code = custom.get(fmt_id, "")
+            if 14 <= fmt_id <= 22 or 45 <= fmt_id <= 47 or re.search(r"[ymdhis]", code.lower()):
+                dates.add(index)
+    return dates
+
+def xlsx_column(ref):
+    letters = "".join(ch for ch in str(ref) if ch.isalpha()).upper()
+    value = 0
+    for ch in letters:
+        value = value * 26 + (ord(ch) - 64)
+    return max(0, value - 1)
+
+def xlsx_value(cell, shared, date_styles):
+    kind = cell.attrib.get("t")
+    value = cell.find(S_NS + "v")
+    if kind == "inlineStr":
+        inline = cell.find(S_NS + "is")
+        return "".join(node.text or "" for node in inline.iter(S_NS + "t")) if inline is not None else ""
+    if value is None or value.text is None:
+        return ""
+    raw = value.text
+    if kind == "s":
+        try:
+            return shared[int(raw)]
+        except Exception:
+            return ""
+    if kind == "b":
+        return "TRUE" if raw == "1" else "FALSE"
+    if kind in ("str", "e"):
+        return raw
+    style = int(cell.attrib.get("s", "0") or 0)
+    if style in date_styles:
+        try:
+            stamp = datetime(1899, 12, 30) + timedelta(days=float(raw))
+            if abs(float(raw) - int(float(raw))) < 1e-6:
+                return stamp.strftime("%Y-%m-%d")
+            return stamp.strftime("%Y-%m-%d %H:%M")
+        except Exception:
+            pass
+    return raw
+
 def render_xlsx(path):
-    import openpyxl
-    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
-    parts = []
-    for sheet in wb.worksheets:
-        parts.append("<h2>" + esc(sheet.title) + "</h2>")
-        rows = []
-        for row_index, row in enumerate(sheet.iter_rows(values_only=True)):
-            if row_index >= 2000:
-                parts.append("<p class=\"meta\">表格超过 2000 行，已截断。</p>")
-                break
-            values = list(row)[:80]
-            cells = "<td>" + "</td><td>".join(esc(value) for value in values) + "</td>"
-            rows.append("<tr>" + cells + "</tr>")
-        if rows:
-            parts.append("<table>" + "".join(rows) + "</table>")
-        else:
-            parts.append("<p class=\"meta\">空工作表。</p>")
-    wb.close()
-    return "".join(parts)
+    with zipfile.ZipFile(path) as archive:
+        shared = xlsx_shared_strings(archive)
+        dates = xlsx_date_styles(archive)
+        parts = []
+        for title, sheet_path in xlsx_sheets(archive):
+            parts.append("<h2>" + esc(title) + "</h2>")
+            try:
+                sheet = ET.fromstring(archive.read(sheet_path))
+            except Exception:
+                parts.append('<p class="meta">工作表无法读取。</p>')
+                continue
+            rows = []
+            truncated = False
+            sheet_data = sheet.find(S_NS + "sheetData")
+            sheet_rows = sheet_data.findall(S_NS + "row") if sheet_data is not None else []
+            for row_index, row in enumerate(sheet_rows):
+                if row_index >= 2000:
+                    truncated = True
+                    break
+                values = {}
+                for cell in row.findall(S_NS + "c"):
+                    index = xlsx_column(cell.attrib.get("r", "A1"))
+                    if index >= 80:
+                        continue
+                    text = xlsx_value(cell, shared, dates)
+                    if text != "":
+                        values[index] = text
+                if values:
+                    width = max(values) + 1
+                    cells = "<td>" + "</td><td>".join(esc(values.get(i, "")) for i in range(width)) + "</td>"
+                    rows.append("<tr>" + cells + "</tr>")
+            if rows:
+                parts.append("<table>" + "".join(rows) + "</table>")
+            else:
+                parts.append('<p class="meta">空工作表。</p>')
+            if truncated:
+                parts.append('<p class="meta">表格超过 2000 行，已截断。</p>')
+        return "".join(parts)
 
 def slide_number(name):
     match = re.search(r"slide(\d+)\.xml$", name)
