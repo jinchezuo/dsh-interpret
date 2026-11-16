@@ -12,7 +12,7 @@ const EMPTY = {
   testBusy: false,
   testResult: null,
   audioInfo: null,
-  dock: { available: false, registered: false, reason: '右侧栏加载中…', mounted: false, expanded: false },
+  dock: { available: false, registered: false, reason: '右侧栏加载中…', mounted: false, expanded: false, open: false },
   draft: null,
   live: {},
   termSearch: { query: '', results: [], busy: false },

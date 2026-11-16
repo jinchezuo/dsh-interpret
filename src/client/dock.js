@@ -1,5 +1,5 @@
 import { createElement as h, useEffect, useRef, useSyncExternalStore } from 'react'
-import { CaptionRow, LiveRow, fmtClock } from './panel.js'
+import { CaptionRow, LiveRow, fmtClock } from './rows.js'
 
 /** Compact docked caption view for the right sidebar tab. */
 export function CaptionDock({ controller }) {

@@ -125,42 +125,11 @@ export function apply(ctx) {
   }
 
   const openDock = () => {
-    const fail = (error) => {
-      const message = String(error?.message || error)
-      failure = message
-      controller.setDock({ available: false, reason: message })
-      controller.update({ error: '右栏字幕打开失败：' + message })
-      reportStatus()
-    }
-    if (!sidebarRight) {
-      fail(new Error('右侧栏服务未就绪，请刷新页面'))
-      return
-    }
-    if (!sidebarRightTabs?.get?.(DOCK_KIND)) {
-      fail(new Error('右栏字幕类型未注册，请刷新页面'))
-      return
-    }
-    const mounted = sidebarRight.mounted?.getSnapshot?.()
-    if (!mounted) {
-      fail(new Error('当前没有打开的会话，无法打开右栏'))
-      return
-    }
-    const attempt = () => {
-      sidebarRight.openTab(DOCK_KIND, { revealIfOpened: true })
-      if (sidebarRight.isExpanded?.() === false) sidebarRight.toggleExpanded?.()
-      dockAvailable = true
-      failure = null
-      controller.setDock({ available: true, registered: true, mounted: true, expanded: true, reason: null })
-      reportStatus()
-    }
-    try {
-      attempt()
-    } catch (error) {
-      // The session store may be adopted one frame after the click.
-      setTimeout(() => {
-        try { attempt() } catch (retryError) { fail(retryError) }
-      }, 120)
-    }
+    // The plugin main panel keeps the DSH right sidebar out of its conversation
+    // mode, so native openTab cannot act here. Toggle an in-panel right column
+    // instead; it shares the same controller and live caption stream.
+    const current = Boolean(controller.getSnapshot().dock?.open)
+    controller.setDock({ open: !current })
   }
 
   const Panel = () => h(Boundary, null, h(PanelView, { controller, openDock }))
