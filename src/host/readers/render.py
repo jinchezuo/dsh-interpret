@@ -152,16 +152,62 @@ def render_pptx(path):
     return "".join(parts) or "<p>演示文稿没有可提取的内容。</p>"
 
 def render_doc(path):
+    if sys.platform == "darwin":
+        try:
+            result = subprocess.run(
+                ["textutil", "-convert", "txt", "-stdout", path],
+                capture_output=True, text=True, timeout=45,
+            )
+        except Exception as error:
+            raise RuntimeError("无法调用 textutil 解析 .doc：" + str(error))
+        if result.returncode != 0:
+            raise RuntimeError((result.stderr or "textutil 解析失败").strip())
+        return "<pre>" + esc(result.stdout) + "</pre>"
+
+    # Windows / Linux: LibreOffice, antiword, then Microsoft Word COM.
+    outdir = os.path.join(os.path.dirname(path), "doc-text")
+    os.makedirs(outdir, exist_ok=True)
     try:
-        result = subprocess.run(
-            ["textutil", "-convert", "txt", "-stdout", path],
-            capture_output=True, text=True, timeout=45,
+        subprocess.run(
+            ["soffice", "--headless", "--convert-to", "txt:Text", "--outdir", outdir, path],
+            capture_output=True, text=True, timeout=90, check=False,
         )
-    except Exception as error:
-        raise RuntimeError("无法调用 textutil 解析 .doc：" + str(error))
-    if result.returncode != 0:
-        raise RuntimeError((result.stderr or "textutil 解析失败").strip())
-    return "<pre>" + esc(result.stdout) + "</pre>"
+        converted = os.path.join(outdir, os.path.splitext(os.path.basename(path))[0] + ".txt")
+        if os.path.exists(converted):
+            with open(converted, "r", encoding="utf-8", errors="replace") as handle:
+                return "<pre>" + esc(handle.read()) + "</pre>"
+    except Exception:
+        pass
+
+    try:
+        result = subprocess.run(["antiword", path], capture_output=True, text=True, timeout=45)
+        if result.returncode == 0 and result.stdout.strip():
+            return "<pre>" + esc(result.stdout) + "</pre>"
+    except Exception:
+        pass
+
+    if sys.platform == "win32":
+        try:
+            target = os.path.join(outdir, "word-com.txt")
+            script = os.path.join(outdir, "word-com.ps1")
+            with open(script, "w", encoding="utf-8") as handle:
+                handle.write('$w=New-Object -ComObject Word.Application; $w.Visible=$false; $d=$w.Documents.Open($args[0],$false,$true); $d.SaveAs([ref]$args[1],[ref]2); $d.Close($false); $w.Quit()')
+            subprocess.run(
+                ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script, path, target],
+                capture_output=True, text=True, timeout=90, check=True,
+            )
+            if os.path.exists(target):
+                with open(target, "rb") as handle:
+                    raw = handle.read()
+                for encoding in ("utf-16", "utf-8-sig", "utf-8", "gbk", "cp1252"):
+                    try:
+                        return "<pre>" + esc(raw.decode(encoding)) + "</pre>"
+                    except UnicodeDecodeError:
+                        continue
+        except Exception:
+            pass
+
+    raise RuntimeError("Windows 解析 .doc 需要 LibreOffice、antiword 或 Microsoft Word；DOCX 不受影响")
 
 def main():
     parser = argparse.ArgumentParser()

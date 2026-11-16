@@ -24,11 +24,12 @@ dsh-interpret 是一个单插件自包含的 DSH 插件，由 host 半和 client
 
 | 能力 | 来源 |
 | --- | --- |
-| 系统音频 helper | assets/system-audio（来自 @huliux/dsh-asr-plugin，Apache-2.0） |
+| macOS 系统音频 helper | assets/system-audio/recording-helper（来自 @huliux/dsh-asr-plugin，Apache-2.0） |
+| Windows 系统音频 helper | assets/system-audio/win32-x64（WASAPI/NAudio，MIT） |
 | Silero VAD 模型 | assets/models/silero_vad.onnx |
 | Parakeet | 首次下载到 dataDir/models |
 | 流式模型 | 首次下载到 dataDir/models |
-| Office 解析 | DSH 自带 Python（python-docx/openpyxl/python-pptx） |
+| Office 解析 | DSH 自带 Python（python-docx/openpyxl/python-pptx）；.doc 平台转换 |
 | PDF | Chromium 内置阅读器 |
 | 翻译 | DSH llm 路由 |
 
@@ -57,7 +58,8 @@ dsh-interpret 是一个单插件自包含的 DSH 插件，由 host 半和 client
 - src/host/service.js：会话、管线、VAD、翻译、持久化；
 - src/host/asr.js、parakeet.js、streaming-asr.js；
 - src/host/terminology.js、term-corrector.js；
-- src/host/system-capture.js；
+- src/host/system-capture.js（按平台选择 helper）；
+- src/win-audio/（Windows WASAPI helper）；
 - src/host/reader.js、readers/render.py；
 - src/host/api.js；
 - src/client/controller.js、panel.js、reader.js、dock.js。
@@ -65,6 +67,8 @@ dsh-interpret 是一个单插件自包含的 DSH 插件，由 host 半和 client
 ## 兼容性
 
 - 当前验证 DSH 0.2.2-rc.3；
-- 系统音频 helper macOS arm64；
-- 麦克风路径不依赖 helper；
+- macOS arm64 使用 ScreenCaptureKit helper；
+- Windows x64 使用 WASAPI 环回 helper，需默认播放设备；
+- 麦克风路径不依赖系统音频 helper；
+- .doc 在 Windows 需要 Word/LibreOffice/antiword；
 - 客户端 bundle 改动后需刷新页面。

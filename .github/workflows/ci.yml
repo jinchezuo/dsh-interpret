@@ -26,3 +26,22 @@ jobs:
       - run: pnpm verify-package
       - run: node scripts/check-docs.mjs
 
+  windows-helper:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Build Windows WASAPI helper
+        shell: pwsh
+        run: ./scripts/build-win-audio.ps1
+      - run: node --test test/standalone.test.mjs
+      - run: pnpm verify-package

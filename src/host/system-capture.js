@@ -8,12 +8,19 @@ import { fileURLToPath } from 'node:url'
 import { decodeWav } from './audio.js'
 
 const HELPER_RELATIVE = 'recording-helper/DSHASRRecordingHelper.app/Contents/Helpers/dsh-asr-capture-system'
+const WINDOWS_HELPER = ['assets', 'system-audio', 'win32-x64', 'dsh-asr-capture-system.exe']
 const PACKAGE_ROOT = fileURLToPath(new URL('../../', import.meta.url))
 const LOCAL_HELPER = join(PACKAGE_ROOT, 'assets', 'system-audio', HELPER_RELATIVE)
 
-/** Locate the bundled ScreenCaptureKit helper, with the old external path as fallback. */
-export function findSystemCaptureHelper() {
-  const candidates = [LOCAL_HELPER]
+/** Candidate helper paths for the current platform, bundled first. */
+export function systemHelperCandidates(platform = process.platform) {
+  const candidates = []
+  if (platform === 'win32') {
+    candidates.push(join(PACKAGE_ROOT, ...WINDOWS_HELPER))
+    return candidates
+  }
+  if (platform !== 'darwin') return candidates
+  candidates.push(LOCAL_HELPER)
   const addProfile = (dir) => {
     if (dir) candidates.push(join(dir, 'node_modules', '@huliux', 'dsh-asr-plugin', 'dist', HELPER_RELATIVE))
   }
@@ -30,9 +37,13 @@ export function findSystemCaptureHelper() {
     const entry = require.resolve('@huliux/dsh-asr-plugin')
     candidates.push(join(dirname(entry), HELPER_RELATIVE))
   } catch {}
-  const pluginRoot = fileURLToPath(new URL('../../', import.meta.url))
-  candidates.push(join(pluginRoot, 'node_modules', '@huliux', 'dsh-asr-plugin', 'dist', HELPER_RELATIVE))
-  const unique = [...new Set(candidates)]
+  candidates.push(join(PACKAGE_ROOT, 'node_modules', '@huliux', 'dsh-asr-plugin', 'dist', HELPER_RELATIVE))
+  return candidates
+}
+
+/** Locate the bundled helper for the current platform (macOS external fallback kept). */
+export function findSystemCaptureHelper() {
+  const unique = [...new Set(systemHelperCandidates())]
   for (const candidate of unique) {
     if (existsSync(candidate)) return { path: candidate, candidates: unique }
   }
@@ -41,9 +52,9 @@ export function findSystemCaptureHelper() {
 
 
 /**
- * Spawn the external capture helper and turn its 1-second WAV chunks into
- * Float32 samples. The helper is the only macOS path available to a DSH
- * plugin: the application window denies getDisplayMedia.
+ * Spawn the platform capture helper (ScreenCaptureKit on macOS, WASAPI
+ * loopback on Windows) and turn its 1-second WAV chunks into Float32 samples.
+ * The DSH application window denies getDisplayMedia on both platforms.
  */
 export class SystemCapture {
   constructor({ sessionDir, log, onSamples, onError }) {
@@ -66,7 +77,10 @@ export class SystemCapture {
     if (this.started) return { started: true }
     const found = findSystemCaptureHelper()
     if (!found.path) {
-      throw Object.assign(new Error('未找到内置的系统音频采集助手'), {
+      const hint = process.platform === 'win32'
+        ? '请安装 win32-x64 包，或运行 scripts/build-win-audio.ps1 生成 Windows helper'
+        : '请确认插件资产完整'
+      throw Object.assign(new Error('未找到内置的系统音频采集助手：' + hint), {
         code: 'SYSTEM_CAPTURE_UNAVAILABLE',
         candidates: found.candidates,
       })
@@ -82,7 +96,7 @@ export class SystemCapture {
       '--bits-per-sample', '16',
       '--channels', '1',
     ]
-    const child = spawn(found.path, args, { stdio: ['ignore', 'ignore', 'pipe'] })
+    const child = spawn(found.path, args, { stdio: ['ignore', 'ignore', 'pipe'], windowsHide: true })
     this.child = child
     this.started = true
     child.stderr.on('data', (chunk) => {

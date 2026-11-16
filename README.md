@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解（麦克风）或电脑系统音频变成英文原句 + 中文译文双语字幕，面向研究生课堂、学术会议和需要术语准确度的场景。
+DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解（麦克风）或电脑系统音频变成英文原句 + 中文译文双语字幕，面向研究生课堂、学术会议和需要术语准确度的场景。支持 macOS arm64 与 Windows x64。
 
 主面板右侧内置讲义阅读器，可以一边看翻译，一边看 PDF、Word、Excel、PPT、CSV、Markdown 讲义，不必在 DeepSeek Harness 和外部 PDF 阅读器之间来回切换。
 
@@ -26,8 +26,9 @@ DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解
 1. **需要 DeepSeek Harness 应用本身**；本插件不能脱离 DSH 运行。
 2. **翻译仍依赖 DSH 已配置的 LLM 路由**，无法把翻译大模型打进插件。
 3. **Parakeet 和流式模型首次需要联网下载（约 700MB）**。
-4. **系统音频 helper 当前是 macOS arm64 构建**，首次从插件内新路径运行可能需要在系统设置里重新授予一次「屏幕录制 / 系统音频」权限。
-5. **PPTX 仍是文字+图片近似阅读，不保证像素级版式**。
+4. **macOS 使用 arm64 helper，Windows 使用 x64 WASAPI helper**；macOS 首次从插件内新路径运行可能需要在系统设置里重新授予一次「屏幕录制 / 系统音频」权限。
+5. **.doc 在 Windows 需要 Microsoft Word、LibreOffice 或 antiword**；DOCX/XLSX/PPTX 不需要这些额外软件。
+6. **PPTX 仍是文字+图片近似阅读，不保证像素级版式**。
 
 ---
 
@@ -50,7 +51,7 @@ DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解
 | --- | --- |
 | PDF | Chromium 内置 PDF 阅读器，支持翻页/缩放/搜索 |
 | DOCX | 保留标题、段落、表格，尽量内嵌图片 |
-| DOC | macOS textutil 转文本阅读 |
+| DOC | macOS textutil；Windows 使用 Word/LibreOffice/antiword |
 | XLSX | 按工作表渲染表格，最多 2000 行、80 列 |
 | CSV | 表格阅读，支持引号/换行，表头固定 |
 | MD | 标题、列表、代码块、表格、链接 |
@@ -62,7 +63,7 @@ DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解
 
 ### 环境要求
 
-- macOS（系统音频当前为 arm64 helper；麦克风路径不受此限制）；
+- macOS arm64 或 Windows x64；
 - DeepSeek Harness 0.2.2-rc.3 或兼容版本；
 - Node.js 20+ 与 pnpm（从源码安装时）；
 - 已配置可用的 DSH LLM 路由；
@@ -82,15 +83,27 @@ dsh plugin --profile desktop add file:$(pwd)
 
 重启 DeepSeek Harness，在左侧栏打开「同传」。
 
-### 方式 B：从 Release tarball 安装
+Windows 从源码安装时额外执行：
 
-下载 dsh-interpret-1.0.0.tgz 后：
-
-```bash
-dsh plugin --profile desktop add /path/to/dsh-interpret-1.0.0.tgz
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/build-win-audio.ps1
 ```
 
-DSH 的插件命令会把 npm 依赖（包括 sherpa-onnx-node）一起安装。
+需要 .NET 8 SDK。
+
+### 方式 B：从 Release tarball 安装
+
+macOS 下载 dsh-interpret-1.1.0.tgz；Windows x64 必须下载 dsh-interpret-1.1.0-win32-x64.tgz（内含 WASAPI helper）：
+
+```bash
+dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.0-win32-x64.tgz
+```
+
+DSH 的插件命令会把 npm 依赖（包括 sherpa-onnx-node）一起安装。Windows 源码安装需要先运行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/build-win-audio.ps1
+```
 
 ### 首次启动
 
@@ -101,7 +114,7 @@ DSH 的插件命令会把 npm 依赖（包括 sherpa-onnx-node）一起安装。
    - Silero VAD 已内置，无需下载。
 3. 在「翻译」卡片确认 DSH LLM 路由；
 4. 点「开始同传」，允许麦克风；
-5. 首次使用系统音频时，按系统提示授予屏幕录制/系统音频权限。
+5. macOS 首次使用系统音频时，按系统提示授予屏幕录制/系统音频权限；Windows 检查默认播放设备即可。
 
 ### 升级
 
@@ -180,10 +193,10 @@ pnpm pack
 ## 故障排查
 
 - 模型未准备：点「准备本机模型」，确认网络；
-- 系统音频无声音：检查系统设置中的屏幕录制/系统音频权限；
+- 系统音频无声音：macOS 检查屏幕录制/系统音频权限；Windows 检查默认播放设备和音频服务；
 - 翻译为空：检查 DSH 的 LLM 路由与「试翻译」；
 - PDF 空白：用「新标签」打开，或检查文件是否损坏；
-- Office 解析失败：确认 DSH 自带 Python 可用；同传本身不受影响。
+- Office 解析失败：确认 DSH 自带 Python 可用；Windows 的 .doc 还需要 Word、LibreOffice 或 antiword；同传本身不受影响。
 
 详见 [故障排查](docs/troubleshooting.md)。
 
@@ -202,7 +215,7 @@ pnpm pack
 ## English quick start
 
 1. Install DeepSeek Harness and configure an LLM route.
-2. Clone this repository, run `pnpm install && pnpm build`, then `dsh plugin --profile desktop add file:$(pwd)`.
+2. Clone this repository, run `pnpm install && pnpm build`, then `dsh plugin --profile desktop add file:$(pwd)`. On Windows x64, either install the `win32-x64` release tarball or run `powershell -ExecutionPolicy Bypass -File scripts/build-win-audio.ps1` first (requires .NET 8 SDK).
 3. Restart DSH, open **同传**, and click **准备本机模型** to download Parakeet (~633MB) and the streaming model (~73MB).
-4. Grant macOS screen/system-audio permission on first system-audio use.
+4. Grant macOS screen/system-audio permission on first system-audio use; on Windows just check the default playback device.
 5. This is a single plugin; no dsh-asr-plugin is required. PDF/DOCX/XLSX/CSV/MD/PPTX handouts open in the right-side reader. PPTX is approximate (text + images).

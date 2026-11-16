@@ -1,21 +1,8 @@
 # 发布到 GitHub
 
-仓库内所有 `jinchezuo` 都是占位符，发布前替换为实际 GitHub 用户名或组织名：
+仓库地址：https://github.com/jinchezuo/dsh-interpret
 
-- README.md
-- package.json
-- CITATION.cff
-
-## 1. 创建仓库
-
-```bash
-# 在 GitHub 创建空仓库后
-git remote add origin https://github.com/jinchezuo/dsh-interpret.git
-git branch -M main
-git push -u origin main
-```
-
-## 2. 本地校验
+## 1. 本地校验
 
 ```bash
 pnpm install --frozen-lockfile
@@ -23,36 +10,49 @@ pnpm build
 pnpm test
 pnpm verify-package
 node scripts/check-docs.mjs
-pnpm pack
 ```
 
-## 3. 打版本标签
+Windows helper 额外校验：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/build-win-audio.ps1
+pnpm verify-package
+```
+
+## 2. 打版本标签
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.1.0
+git push origin v1.1.0
 ```
 
-Release 工作流会自动：
+Release 工作流会并行构建：
 
-- 构建客户端；
-- 跑完整测试；
-- 打包 dsh-interpret-1.0.0.tgz；
-- 生成 SHA256SUMS.txt；
-- 创建 GitHub Release 并上传工件。
+- dsh-interpret-1.1.0.tgz（macOS/generic，含 arm64 helper）；
+- dsh-interpret-1.1.0-win32-x64.tgz（含 WASAPI exe）；
+- SHA256SUMS.txt。
 
-## 4. 检查 Release
+然后由 publish job 创建 GitHub Release。
 
-- 下载 tarball；
-- 在干净 DSH profile 执行 `dsh plugin --profile test add <tarball>`；
-- 确认没有 dsh-asr 也能加载并找到内置 helper/VAD；
-- 下载模型后测试麦克风与讲义阅读器。
+## 3. 检查 Release
 
-## 5. 发布前检查
+- 下载两个 tarball 和校验和；
+- macOS：干净 DSH profile 安装 generic 包，验证麦克风/系统音频/讲义；
+- Windows：干净 DSH profile 安装 win32-x64 包，验证默认播放设备系统音频；
+- 确认 Windows 包内存在 assets/system-audio/win32-x64/dsh-asr-capture-system.exe；
+- 确认通用包没有被误用于 Windows 系统音频。
 
-- [ ] 所有 `jinchezuo` 已替换；
-- [ ] README 的“重要声明”五条平台前提仍在；
-- [ ] LICENSE / THIRD_PARTY_NOTICES 完整；
-- [ ] 没有提交 .models、logs、tgz、node_modules；
-- [ ] GitHub Actions 绿色；
+## 4. 发布前检查
+
+- [ ] package.json / api.js / README / CITATION 版本一致；
+- [ ] README 的“重要声明”双平台前提仍在；
+- [ ] LICENSE / THIRD_PARTY_NOTICES 包含 NAudio；
+- [ ] 没有提交 .models、logs、tgz、node_modules、build；
+- [ ] GitHub Actions Ubuntu + Windows 绿色；
 - [ ] 备份 tag backup-v0.5.0 仍在。
+
+## 5. 回滚
+
+- 旧版本标签和 Release 保留；
+- 用户可重新安装 v1.0.0 的 macOS 包；
+- Windows 首版为 v1.1.0，无更早 Windows 包。

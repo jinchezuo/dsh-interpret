@@ -1,6 +1,6 @@
 # 配置
 
-设置保存在 `~/.dsh/interpret/settings.json`（如存在）；模型和历史在 `~/.dsh/interpret` 下。
+设置保存在 `~/.dsh/interpret/settings.json`（如存在）；模型和历史在 `~/.dsh/interpret` 下。Windows 对应用户目录下的 `.dsh\interpret`。
 
 ## 语音识别
 
@@ -34,7 +34,7 @@
 
 ## 数据目录
 
-默认 `~/.dsh/interpret`：
+默认 `~/.dsh/interpret`（Windows 为 `%USERPROFILE%\.dsh\interpret`）：
 - `sessions/`：历史；
 - `models/`：模型；
 - `reader/`：上传的讲义；

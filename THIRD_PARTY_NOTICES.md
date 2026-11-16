@@ -5,7 +5,11 @@
 This plugin redistributes the signed ScreenCaptureKit helper from
 @huliux/dsh-asr-plugin under the Apache License 2.0. The helper is stored in
 assets/system-audio/recording-helper and is used only for local system-audio
-capture.
+capture on macOS.
+
+The Windows helper is built from src/win-audio (C#/.NET 8) and distributed as
+assets/system-audio/win32-x64/dsh-asr-capture-system.exe in the Windows
+release. It captures the default render device via WASAPI loopback.
 
 Upstream native capture source: Bitbook/clerki (BSD-2-Clause).
 Upstream plugin: @huliux/dsh-asr-plugin (Apache-2.0).
@@ -27,6 +31,13 @@ The Apache-2.0 license text is included at assets/system-audio/LICENSE. Upstream
 Model weights other than the small Silero VAD file are not committed to this
 repository or packaged into the npm bundle.
 
+## Windows audio helper
+
+- NAudio 2.2.1 — MIT License, Copyright (c) Mark Heath. Used by the Windows
+  WASAPI loopback helper; the NuGet package is restored at build time and its
+  code is bundled into the self-contained exe. The full MIT text is at
+  assets/system-audio/win32-x64/NAUDIO-LICENSE.txt.
+
 ## Native runtime
 
 sherpa-onnx-node and its platform-specific sherpa-onnx native packages are
@@ -36,7 +47,8 @@ installed as npm dependencies and are Apache-2.0 licensed.
 
 The handout reader uses the Python runtime bundled with DeepSeek Harness
 (python-docx, openpyxl, python-pptx, Pillow). Those packages retain their
-upstream licenses. .doc conversion on macOS uses the system textutil command.
+upstream licenses. .doc conversion on macOS uses the system textutil command;
+on Windows it uses Microsoft Word COM, LibreOffice, or antiword when available.
 
 ## Terminology data
 

@@ -16,9 +16,10 @@
 
 ## 没有系统音频
 
-- 确认 macOS 已授予「屏幕录制/系统音频」权限；
-- 首次从插件内新路径运行 helper 需要重新授权一次；
 - 确认设置中 systemAudio 不是 off；
+- macOS：确认已授予「屏幕录制/系统音频」权限；首次从插件内新路径运行 helper 需要重新授权一次；
+- Windows：确认默认播放设备可用、未被独占、音频服务正在运行；
+- Windows 通用 tarball 不含 exe，必须使用 win32-x64 包或先运行 build-win-audio.ps1；
 - 仍然失败时，麦克风同传不受影响。
 
 ## 翻译为空
@@ -36,9 +37,10 @@
 
 ## Office 解析失败
 
-- 确认 DSH 自带 Python 存在（~/.dsh/dsh-runtimes/*/dependencies/python）；
+- 确认 DSH 自带 Python 存在（~/.dsh/dsh-runtimes/*/dependencies/python，Windows 为 python.exe）；
 - 检查 ~/.dsh/interpret 是否有读取权限；
 - DOCX/XLSX 依赖 python-docx/openpyxl；PPTX 可用标准库；
+- Windows 的 .doc 还需要 Microsoft Word、LibreOffice 或 antiword；
 - 同传字幕不受讲义解析失败影响。
 
 ## 刷新无效果
@@ -50,7 +52,7 @@
 
 ## 页面仍显示旧 UI
 
-- 客户端 bundle 更新后需刷新页面（⌘⇧R）；
+- 客户端 bundle 更新后需刷新页面（macOS ⌘⇧R / Windows Ctrl+F5）；
 - 确认插件已重新加载。
 
 ## 端口/同源错误

@@ -2,6 +2,7 @@ import { execFile } from 'node:child_process'
 import { createReadStream } from 'node:fs'
 import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { basename, extname, join, resolve, sep } from 'node:path'
+import { homedir } from 'node:os'
 import { randomUUID } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
@@ -133,17 +134,25 @@ export class ReaderService {
 
   async findPython(ext) {
     if (this.python && this.pythonDeps) return this.python
-    const home = String(process.env.DSH_HOME || '').trim() || join(process.env.HOME || '', '.dsh')
+    const home = String(process.env.DSH_HOME || '').trim() || join(process.env.USERPROFILE || process.env.HOME || homedir(), '.dsh')
     const bundled = []
     try {
       for (const name of await readdir(join(home, 'dsh-runtimes'))) {
-        bundled.push(join(home, 'dsh-runtimes', name, 'dependencies', 'python', 'bin', 'python3'))
+        const root = join(home, 'dsh-runtimes', name, 'dependencies', 'python')
+        bundled.push(
+          join(root, 'bin', 'python3'),
+          join(root, 'bin', 'python.exe'),
+          join(root, 'bin', 'python3.exe'),
+          join(root, 'python.exe'),
+          join(root, 'python3'),
+        )
       }
     } catch {}
     const candidates = [
       process.env.DSH_PYTHON,
       ...bundled,
-      'python3',
+      process.platform === 'win32' ? 'python' : 'python3',
+      process.platform === 'win32' ? 'py' : 'python3',
       '/Library/Frameworks/Python.framework/Versions/3.14/bin/python3',
       '/usr/local/bin/python3',
       '/opt/homebrew/bin/python3',

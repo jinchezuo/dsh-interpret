@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  package-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,14 +23,62 @@ jobs:
       - run: pnpm test
       - run: pnpm verify-package
       - run: node scripts/check-docs.mjs
-      - name: Pack
+      - name: Pack generic package
         run: |
           mkdir -p release
           pnpm pack --pack-destination release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-linux
+          path: release/*.tgz
+
+  package-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Build Windows WASAPI helper
+        shell: pwsh
+        run: ./scripts/build-win-audio.ps1
+      - run: pnpm verify-package
+      - name: Pack Windows package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          pnpm pack --pack-destination release
+          $pkg = Get-ChildItem release/*.tgz | Select-Object -First 1
+          $stem = [System.IO.Path]::GetFileNameWithoutExtension($pkg.Name)
+          $target = Join-Path release ($stem + "-win32-x64.tgz")
+          Rename-Item $pkg.FullName $target
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-windows
+          path: release/*win32-x64.tgz
+
+  publish:
+    needs: [package-linux, package-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: package-*
+          path: release
+          merge-multiple: true
+      - name: Checksums
+        run: |
           cd release
           sha256sum *.tgz > SHA256SUMS.txt
-      - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v2
+          ls -lh
+      - uses: softprops/action-gh-release@v2
         with:
           files: |
             release/*.tgz

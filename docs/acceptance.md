@@ -1,23 +1,23 @@
-# 验收清单（1.0.0）
+# 验收清单（1.1.0）
 
 ## 自动化
 
 - [x] pnpm build
-- [x] pnpm test（27 项）
+- [x] pnpm test（28 项；无模型时模型测试跳过）
 - [x] pnpm verify-package
 - [x] node scripts/check-docs.mjs
-- [x] tarball 包含 helper、VAD、reader.py、client.js
+- [x] Windows CI 构建 WASAPI helper
+- [ ] Windows helper 实机采集验证
+- [x] tarball 包含 macOS helper、VAD、reader.py、client.js
+- [x] Windows tarball 包含 win32-x64 exe
 - [x] 临时 profile 只安装一个 tarball，npm 依赖自动安装
 
-## 安装
+## macOS
 
 - [ ] 干净 DSH profile 从 README 安装
 - [ ] 禁用/卸载 dsh-asr 后插件仍加载
 - [ ] 模型准备完成
 - [ ] 系统音频权限授予后可用
-
-## 功能
-
 - [ ] 麦克风同传
 - [ ] 系统音频同传
 - [ ] 实时英中字幕
@@ -26,6 +26,18 @@
 - [ ] 保存并刷新
 - [ ] 讲义 PDF/Word/Excel/CSV/MD/PPTX
 - [ ] 右栏关闭/重新打开
+- [ ] 页面刷新后恢复
+
+## Windows x64
+
+- [ ] 安装 win32-x64 tarball
+- [ ] 默认播放设备存在
+- [ ] 麦克风同传
+- [ ] 系统音频同传（播放视频）
+- [ ] 无屏幕录制权限要求
+- [ ] 讲义 PDF/DOCX/XLSX/CSV/MD/PPTX
+- [ ] .doc：有 Word/LibreOffice/antiword 时成功，无则清晰报错
+- [ ] 历史/导出/保存并刷新
 - [ ] 页面刷新后恢复
 
 ## 回归

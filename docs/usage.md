@@ -34,7 +34,7 @@
 
 - PDF 使用 Chromium 内置阅读器；
 - DOCX 保留标题/段落/表格；
-- DOC 使用 macOS textutil；
+- DOC 在 macOS 使用 textutil；Windows 使用 Word/LibreOffice/antiword；
 - XLSX 最多 2000 行、80 列；
 - CSV 表头固定；
 - MD 支持常用语法；

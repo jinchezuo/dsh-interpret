@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.0 — 2026-11-16
+
+### Added
+
+- Windows x64 支持。
+- Windows WASAPI 系统音频 helper（C#/NAudio），输出与 macOS helper 相同的 1 秒 PCM16 WAV 分块。
+- Windows DSH 自带 Python 查找与 .doc 的 Word/LibreOffice/antiword 降级。
+- 双平台 Release：win32-x64 包与 SHA256SUMS。
+
+### Changed
+
+- 版本升级到 1.1.0。
+- README/安装/故障排查/验收文档改为双平台。
+
 ## 1.0.0 — 2026-11-16
 
 ### Added

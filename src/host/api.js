@@ -45,7 +45,7 @@ export function registerApi(ctx, service) {
           ok: true,
           data: {
             name: 'dsh-interpret',
-            version: '1.0.0',
+            version: '1.1.0',
             client: { registered: Boolean(clientPath), path: clientPath || null, boot: bootEntry },
             phase: state.phase,
             asr: state.asr?.picked ? { id: state.asr.picked.id, preparation: state.asr.picked.preparation } : null,

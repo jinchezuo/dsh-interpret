@@ -4,7 +4,7 @@ import { existsSync } from 'node:fs'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { findSystemCaptureHelper } from '../src/host/system-capture.js'
+import { findSystemCaptureHelper, systemHelperCandidates } from '../src/host/system-capture.js'
 import { resolveVadModel } from '../src/host/silero-vad.js'
 import { AsrClient } from '../src/host/asr.js'
 import { normalizeConfig } from '../src/host/config.js'
@@ -14,6 +14,13 @@ test('system audio helper is bundled inside the plugin', () => {
   assert.ok(found.path, 'helper should be found')
   assert.ok(found.path.includes(join('assets', 'system-audio')), 'bundled helper must be preferred: ' + found.path)
   assert.ok(existsSync(found.path))
+})
+
+test('Windows helper path is platform-specific', () => {
+  const windows = systemHelperCandidates('win32')
+  assert.ok(windows.length === 1)
+  assert.ok(windows[0].endsWith(join('system-audio', 'win32-x64', 'dsh-asr-capture-system.exe')), windows[0])
+  assert.deepEqual(systemHelperCandidates('linux'), [])
 })
 
 test('Silero VAD model is bundled inside the plugin', async () => {

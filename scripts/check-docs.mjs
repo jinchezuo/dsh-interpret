@@ -7,7 +7,8 @@ const requiredPhrases = [
   '需要 DeepSeek Harness 应用本身',
   '翻译仍依赖 DSH 已配置的 LLM 路由',
   'Parakeet 和流式模型首次需要联网下载（约 700MB）',
-  '系统音频 helper 当前是 macOS arm64 构建',
+  'macOS 使用 arm64 helper，Windows 使用 x64 WASAPI helper',
+  '.doc 在 Windows 需要 Microsoft Word、LibreOffice 或 antiword',
   'PPTX 仍是文字+图片近似阅读',
 ]
 const requiredFiles = [
