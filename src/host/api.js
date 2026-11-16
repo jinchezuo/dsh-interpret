@@ -43,13 +43,17 @@ export function registerApi(ctx, service) {
           ok: true,
           data: {
             name: 'dsh-interpret',
-            version: '0.1.0',
+            version: '0.4.0',
             client: { registered: Boolean(clientPath), path: clientPath || null, boot: bootEntry },
             phase: state.phase,
             asr: state.asr?.picked ? { id: state.asr.picked.id, preparation: state.asr.picked.preparation } : null,
             mt: state.mt || null,
             glossary: state.glossary,
+            streaming: state.streaming,
+            terminology: state.terminology,
+            live: { mic: Boolean(state.live?.mic?.en), system: Boolean(state.live?.system?.en) },
             clientStatus: service.clientStatus,
+            clientEvents: service.clientEvents.slice(-5),
             segments: state.segmentCount,
             pid: process.pid,
           },
@@ -62,6 +66,13 @@ export function registerApi(ctx, service) {
         sendJson(res, rejection, { ok: false, error: { code: 'UNAUTHORIZED', message: '同传接口只接受本机同源请求。' } })
         return
       }
+      if (path === '/client-event') {
+        if (method !== 'POST') return methodNotAllowed(res, ['POST'])
+        const body = await readJson(req, 32 * 1024)
+        sendJson(res, 200, { ok: true, data: service.recordClientEvent(body || {}) })
+        return
+      }
+
       if (path === '/client-ready') {
         if (method !== 'POST') return methodNotAllowed(res, ['POST'])
         const body = await readJson(req, 32 * 1024)
@@ -221,6 +232,21 @@ export function registerApi(ctx, service) {
         return
       }
 
+      if (path === '/terminology/stats') {
+        if (method !== 'GET') return methodNotAllowed(res, ['GET'])
+        sendJson(res, 200, { ok: true, data: service.describe().terminology })
+        return
+      }
+
+      if (path === '/terminology/search') {
+        if (method !== 'GET') return methodNotAllowed(res, ['GET'])
+        const query = url.searchParams.get('q') || ''
+        const domain = url.searchParams.get('domain') || ''
+        const limit = Math.max(1, Math.min(30, Number(url.searchParams.get('limit') || 12)))
+        sendJson(res, 200, { ok: true, data: service.terminology.search(query, { domain, limit }) })
+        return
+      }
+
       if (path === '/models') {
         if (method !== 'GET') return methodNotAllowed(res, ['GET'])
         sendJson(res, 200, { ok: true, data: await service.listModels() })
@@ -230,6 +256,12 @@ export function registerApi(ctx, service) {
       if (path === '/models/vad/prepare') {
         if (method !== 'POST') return methodNotAllowed(res, ['POST'])
         sendJson(res, 200, { ok: true, data: await service.prepareVad() })
+        return
+      }
+
+      if (path === '/models/streaming/prepare') {
+        if (method !== 'POST') return methodNotAllowed(res, ['POST'])
+        sendJson(res, 200, { ok: true, data: await service.prepareStreaming() })
         return
       }
 

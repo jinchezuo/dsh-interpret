@@ -3,5 +3,6 @@ lib/client.js.map
 .DS_Store
 *.tgz
 .models/
+.cache/
 .test-data*/
 logs/

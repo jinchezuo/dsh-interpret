@@ -1,0 +1,24 @@
+{
+  "version": "2026-11-16",
+  "count": 3050,
+  "domains": {
+    "ai": 430,
+    "urban": 38,
+    "tech": 674,
+    "biology": 402,
+    "electronics": 1048,
+    "statistics": 229,
+    "architecture": 293,
+    "math": 76
+  },
+  "zhCount": 280,
+  "ipaCount": 1554,
+  "sources": [
+    "Wikipedia glossaries (CC BY-SA 4.0)",
+    "Britfone (MIT)",
+    "CMUdict (BSD-2-Clause)",
+    "project curated core"
+  ],
+  "sha256": "fd5850475b2076e3cc729b680c40a9640c5febb53a6da2ffd4e8107b73ba2d07",
+  "bytes": 276682
+}

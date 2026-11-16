@@ -1,0 +1,2518 @@
+{
+  "version": 1,
+  "note": "人工核心术语；IPA 由构建脚本从 Britfone/CMUdict 补充",
+  "terms": [
+    {
+      "id": "large-language-model",
+      "source": "large language model",
+      "zh": "大语言模型",
+      "domains": [
+        "ai",
+        "tech"
+      ],
+      "aliases": [
+        "large language models",
+        "LLM",
+        "LLMs"
+      ],
+      "confusions": [
+        "laboratory model",
+        "large language models",
+        "large language modal"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "transformer",
+      "source": "transformer",
+      "zh": "Transformer 模型",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "transformers"
+      ],
+      "confusions": [
+        "transform",
+        "transformer model"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "attention-mechanism",
+      "source": "attention mechanism",
+      "zh": "注意力机制",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "attention"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "self-attention",
+      "source": "self-attention",
+      "zh": "自注意力",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "self attention"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "multi-head-attention",
+      "source": "multi-head attention",
+      "zh": "多头注意力",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "multi head attention"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "embedding",
+      "source": "embedding",
+      "zh": "嵌入",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "embeddings",
+        "vector embedding"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "fine-tuning",
+      "source": "fine-tuning",
+      "zh": "微调",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "fine tuning",
+        "finetuning"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "pretraining",
+      "source": "pretraining",
+      "zh": "预训练",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "pre-training",
+        "pre training"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "inference",
+      "source": "inference",
+      "zh": "推理",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "inferencing"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "hallucination",
+      "source": "hallucination",
+      "zh": "幻觉",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "hallucinations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "prompt-engineering",
+      "source": "prompt engineering",
+      "zh": "提示工程",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "prompt engineer"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "retrieval-augmented-generation",
+      "source": "retrieval-augmented generation",
+      "zh": "检索增强生成",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "retrieval augmented generation",
+        "RAG"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "reinforcement-learning",
+      "source": "reinforcement learning",
+      "zh": "强化学习",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "RL"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "supervised-learning",
+      "source": "supervised learning",
+      "zh": "监督学习",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "unsupervised-learning",
+      "source": "unsupervised learning",
+      "zh": "无监督学习",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "neural-network",
+      "source": "neural network",
+      "zh": "神经网络",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "neural networks"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "deep-learning",
+      "source": "deep learning",
+      "zh": "深度学习",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "machine-learning",
+      "source": "machine learning",
+      "zh": "机器学习",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "ML"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "natural-language-processing",
+      "source": "natural language processing",
+      "zh": "自然语言处理",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "NLP"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "computer-vision",
+      "source": "computer vision",
+      "zh": "计算机视觉",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "CV"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "diffusion-model",
+      "source": "diffusion model",
+      "zh": "扩散模型",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "diffusion models"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "generative-adversarial-network",
+      "source": "generative adversarial network",
+      "zh": "生成对抗网络",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "GAN",
+        "generative adversarial networks"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "convolutional-neural-network",
+      "source": "convolutional neural network",
+      "zh": "卷积神经网络",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "CNN",
+        "convolutional neural networks"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "recurrent-neural-network",
+      "source": "recurrent neural network",
+      "zh": "循环神经网络",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "RNN",
+        "recurrent neural networks"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "backpropagation",
+      "source": "backpropagation",
+      "zh": "反向传播",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "back propagation",
+        "back-propagation"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "gradient-descent",
+      "source": "gradient descent",
+      "zh": "梯度下降",
+      "domains": [
+        "ai",
+        "math"
+      ],
+      "aliases": [
+        "gradient decent"
+      ],
+      "confusions": [
+        "gradient decent"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "loss-function",
+      "source": "loss function",
+      "zh": "损失函数",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "loss functions"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "overfitting",
+      "source": "overfitting",
+      "zh": "过拟合",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "over fitting"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "underfitting",
+      "source": "underfitting",
+      "zh": "欠拟合",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "under fitting"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "benchmark",
+      "source": "benchmark",
+      "zh": "基准测试",
+      "domains": [
+        "ai",
+        "tech"
+      ],
+      "aliases": [
+        "benchmarks"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "dataset",
+      "source": "dataset",
+      "zh": "数据集",
+      "domains": [
+        "ai",
+        "tech"
+      ],
+      "aliases": [
+        "datasets",
+        "data set"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "context-window",
+      "source": "context window",
+      "zh": "上下文窗口",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "context windows"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "zero-shot-learning",
+      "source": "zero-shot learning",
+      "zh": "零样本学习",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "zero shot learning"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "few-shot-learning",
+      "source": "few-shot learning",
+      "zh": "少样本学习",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "few shot learning"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "chain-of-thought",
+      "source": "chain of thought",
+      "zh": "思维链",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "chain-of-thought",
+        "CoT"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "multimodal",
+      "source": "multimodal",
+      "zh": "多模态",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "multi-modal"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "quantization",
+      "source": "quantization",
+      "zh": "量化",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "quantisation"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "knowledge-distillation",
+      "source": "knowledge distillation",
+      "zh": "知识蒸馏",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "distillation"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "activation-function",
+      "source": "activation function",
+      "zh": "激活函数",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "activation functions"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "softmax",
+      "source": "softmax",
+      "zh": "Softmax 函数",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "logits",
+      "source": "logits",
+      "zh": "逻辑值",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "logit"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "perplexity",
+      "source": "perplexity",
+      "zh": "困惑度",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "beam-search",
+      "source": "beam search",
+      "zh": "束搜索",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "beam-search"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "encoder",
+      "source": "encoder",
+      "zh": "编码器",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "encoders"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "decoder",
+      "source": "decoder",
+      "zh": "解码器",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "decoders"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "autoencoder",
+      "source": "autoencoder",
+      "zh": "自编码器",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "auto-encoder"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "latent-space",
+      "source": "latent space",
+      "zh": "潜空间",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "latent spaces"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "representation-learning",
+      "source": "representation learning",
+      "zh": "表征学习",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "transfer-learning",
+      "source": "transfer learning",
+      "zh": "迁移学习",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "federated-learning",
+      "source": "federated learning",
+      "zh": "联邦学习",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "knowledge-graph",
+      "source": "knowledge graph",
+      "zh": "知识图谱",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [
+        "knowledge graphs"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "semantic-search",
+      "source": "semantic search",
+      "zh": "语义搜索",
+      "domains": [
+        "ai"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "vector-database",
+      "source": "vector database",
+      "zh": "向量数据库",
+      "domains": [
+        "ai",
+        "tech"
+      ],
+      "aliases": [
+        "vector databases"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "token",
+      "source": "token",
+      "zh": "词元",
+      "domains": [
+        "ai",
+        "tech"
+      ],
+      "aliases": [
+        "tokens"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "tokenization",
+      "source": "tokenization",
+      "zh": "分词",
+      "domains": [
+        "ai",
+        "tech"
+      ],
+      "aliases": [
+        "tokenisation",
+        "tokenizer"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "eigenvalue",
+      "source": "eigenvalue",
+      "zh": "特征值",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "eigenvalues",
+        "eigen value"
+      ],
+      "confusions": [
+        "eigen value",
+        "iguana value"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "eigenvector",
+      "source": "eigenvector",
+      "zh": "特征向量",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "eigenvectors",
+        "eigen vector"
+      ],
+      "confusions": [
+        "eigen vector"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "eigenvalue-decomposition",
+      "source": "eigenvalue decomposition",
+      "zh": "特征值分解",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "eigendecomposition"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "symmetric-matrix",
+      "source": "symmetric matrix",
+      "zh": "对称矩阵",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "symmetric matrices"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "hamiltonian",
+      "source": "Hamiltonian",
+      "zh": "哈密顿量",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "hamiltonian"
+      ],
+      "confusions": [
+        "hambletonian",
+        "hamiltonian"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "hermitian",
+      "source": "Hermitian",
+      "zh": "厄米的",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "hermitian"
+      ],
+      "confusions": [
+        "her mission",
+        "hermetian"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "orthogonal",
+      "source": "orthogonal",
+      "zh": "正交的",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "orthogonality"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "determinant",
+      "source": "determinant",
+      "zh": "行列式",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "determinants"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "trace",
+      "source": "trace",
+      "zh": "迹",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "matrix trace"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "norm",
+      "source": "norm",
+      "zh": "范数",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "norms"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "inner-product",
+      "source": "inner product",
+      "zh": "内积",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "inner products"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "vector-space",
+      "source": "vector space",
+      "zh": "向量空间",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "vector spaces"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "linear-transformation",
+      "source": "linear transformation",
+      "zh": "线性变换",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "linear transformations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "basis",
+      "source": "basis",
+      "zh": "基",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "bases"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "manifold",
+      "source": "manifold",
+      "zh": "流形",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "manifolds"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "topology",
+      "source": "topology",
+      "zh": "拓扑",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "topological"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "derivative",
+      "source": "derivative",
+      "zh": "导数",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "derivatives"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "partial-derivative",
+      "source": "partial derivative",
+      "zh": "偏导数",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "partial derivatives"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "jacobian",
+      "source": "Jacobian",
+      "zh": "雅可比矩阵",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "jacobian"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "hessian",
+      "source": "Hessian",
+      "zh": "海森矩阵",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "hessian"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "integral",
+      "source": "integral",
+      "zh": "积分",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "integrals"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "limit",
+      "source": "limit",
+      "zh": "极限",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "limits"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "convergence",
+      "source": "convergence",
+      "zh": "收敛",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "convergent"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "fourier-transform",
+      "source": "Fourier transform",
+      "zh": "傅里叶变换",
+      "domains": [
+        "math",
+        "electronics"
+      ],
+      "aliases": [
+        "fourier transforms"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "laplace-transform",
+      "source": "Laplace transform",
+      "zh": "拉普拉斯变换",
+      "domains": [
+        "math",
+        "electronics"
+      ],
+      "aliases": [
+        "laplace transforms"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "sigma-algebra",
+      "source": "sigma-algebra",
+      "zh": "σ-代数",
+      "domains": [
+        "math",
+        "statistics"
+      ],
+      "aliases": [
+        "sigma algebra"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "banach-space",
+      "source": "Banach space",
+      "zh": "巴拿赫空间",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "banach spaces"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "hilbert-space",
+      "source": "Hilbert space",
+      "zh": "希尔伯特空间",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "hilbert spaces"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "isomorphism",
+      "source": "isomorphism",
+      "zh": "同构",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "isomorphisms"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "homomorphism",
+      "source": "homomorphism",
+      "zh": "同态",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "homomorphisms"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "polynomial",
+      "source": "polynomial",
+      "zh": "多项式",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "polynomials"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "theorem",
+      "source": "theorem",
+      "zh": "定理",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "theorems"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "lemma",
+      "source": "lemma",
+      "zh": "引理",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "lemmas"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "corollary",
+      "source": "corollary",
+      "zh": "推论",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "corollaries"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "hypothesis-testing",
+      "source": "hypothesis testing",
+      "zh": "假设检验",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "hypothesis test"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "p-value",
+      "source": "p-value",
+      "zh": "p 值",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "p value",
+        "p-values"
+      ],
+      "confusions": [
+        "p value",
+        "p value"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "confidence-interval",
+      "source": "confidence interval",
+      "zh": "置信区间",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "confidence intervals"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "linear-regression",
+      "source": "linear regression",
+      "zh": "线性回归",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "logistic-regression",
+      "source": "logistic regression",
+      "zh": "逻辑回归",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "bayesian-inference",
+      "source": "Bayesian inference",
+      "zh": "贝叶斯推断",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "bayesian inference"
+      ],
+      "confusions": [
+        "bayesion inference"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "prior-distribution",
+      "source": "prior distribution",
+      "zh": "先验分布",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "prior",
+        "priors"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "posterior-distribution",
+      "source": "posterior distribution",
+      "zh": "后验分布",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "posterior"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "likelihood",
+      "source": "likelihood",
+      "zh": "似然",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "likelihoods"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "maximum-likelihood-estimation",
+      "source": "maximum likelihood estimation",
+      "zh": "最大似然估计",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "MLE"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "variance",
+      "source": "variance",
+      "zh": "方差",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "variances"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "standard-deviation",
+      "source": "standard deviation",
+      "zh": "标准差",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "standard deviations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "covariance",
+      "source": "covariance",
+      "zh": "协方差",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "covariances"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "correlation",
+      "source": "correlation",
+      "zh": "相关性",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "correlations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "normal-distribution",
+      "source": "normal distribution",
+      "zh": "正态分布",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "gaussian distribution"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "binomial-distribution",
+      "source": "binomial distribution",
+      "zh": "二项分布",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "binomial distributions"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "poisson-distribution",
+      "source": "Poisson distribution",
+      "zh": "泊松分布",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "poisson distributions"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "bootstrap",
+      "source": "bootstrap",
+      "zh": "自助法",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "bootstrapping"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "cross-validation",
+      "source": "cross-validation",
+      "zh": "交叉验证",
+      "domains": [
+        "statistics",
+        "ai"
+      ],
+      "aliases": [
+        "cross validation"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "bias-variance-tradeoff",
+      "source": "bias-variance tradeoff",
+      "zh": "偏差-方差权衡",
+      "domains": [
+        "statistics",
+        "ai"
+      ],
+      "aliases": [
+        "bias variance tradeoff"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "statistical-significance",
+      "source": "statistical significance",
+      "zh": "统计显著性",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "effect-size",
+      "source": "effect size",
+      "zh": "效应量",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "effect sizes"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "anova",
+      "source": "ANOVA",
+      "zh": "方差分析",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "analysis of variance"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "chi-square-test",
+      "source": "chi-square test",
+      "zh": "卡方检验",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "chi square test",
+        "chi-squared test"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "cell-membrane",
+      "source": "cell membrane",
+      "zh": "细胞膜",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "plasma membrane"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "protein",
+      "source": "protein",
+      "zh": "蛋白质",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "proteins"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "enzyme",
+      "source": "enzyme",
+      "zh": "酶",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "enzymes"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "gene",
+      "source": "gene",
+      "zh": "基因",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "genes"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "genome",
+      "source": "genome",
+      "zh": "基因组",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "genomes"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "dna",
+      "source": "DNA",
+      "zh": "脱氧核糖核酸",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "deoxyribonucleic acid"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "rna",
+      "source": "RNA",
+      "zh": "核糖核酸",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "ribonucleic acid"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "transcription",
+      "source": "transcription",
+      "zh": "转录",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "transcriptions"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "translation",
+      "source": "translation",
+      "zh": "翻译",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "translations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "mutation",
+      "source": "mutation",
+      "zh": "突变",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "mutations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "allele",
+      "source": "allele",
+      "zh": "等位基因",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "alleles"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "phenotype",
+      "source": "phenotype",
+      "zh": "表型",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "phenotypes"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "genotype",
+      "source": "genotype",
+      "zh": "基因型",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "genotypes"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "evolution",
+      "source": "evolution",
+      "zh": "进化",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "evolutionary"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "natural-selection",
+      "source": "natural selection",
+      "zh": "自然选择",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "ecosystem",
+      "source": "ecosystem",
+      "zh": "生态系统",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "ecosystems"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "species",
+      "source": "species",
+      "zh": "物种",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "species"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "population",
+      "source": "population",
+      "zh": "种群",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "populations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "organism",
+      "source": "organism",
+      "zh": "生物体",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "organisms"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "model-organism",
+      "source": "model organism",
+      "zh": "模式生物",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "model organisms"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "laboratory-model",
+      "source": "laboratory model",
+      "zh": "实验室模型",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "laboratory models"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "crispr",
+      "source": "CRISPR",
+      "zh": "CRISPR 基因编辑",
+      "domains": [
+        "biology"
+      ],
+      "aliases": [
+        "crispr"
+      ],
+      "confusions": [
+        "crisper"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "zoning",
+      "source": "zoning",
+      "zh": "区划",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "zoning ordinance"
+      ],
+      "confusions": [
+        "zoning"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "land-use",
+      "source": "land use",
+      "zh": "土地利用",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "land-use"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "urban-sprawl",
+      "source": "urban sprawl",
+      "zh": "城市蔓延",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "sprawl"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "transit-oriented-development",
+      "source": "transit-oriented development",
+      "zh": "公交导向开发",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "TOD"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "mixed-use-development",
+      "source": "mixed-use development",
+      "zh": "混合用途开发",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "mixed use development"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "density",
+      "source": "density",
+      "zh": "密度",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "densities"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "floor-area-ratio",
+      "source": "floor area ratio",
+      "zh": "容积率",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "FAR"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "comprehensive-plan",
+      "source": "comprehensive plan",
+      "zh": "总体规划",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "master plan"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "public-transit",
+      "source": "public transit",
+      "zh": "公共交通",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "public transport"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "pedestrian",
+      "source": "pedestrian",
+      "zh": "行人",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "pedestrians"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "infrastructure",
+      "source": "infrastructure",
+      "zh": "基础设施",
+      "domains": [
+        "urban",
+        "tech"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "gentrification",
+      "source": "gentrification",
+      "zh": "绅士化",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "affordable-housing",
+      "source": "affordable housing",
+      "zh": "可负担住房",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "urban-renewal",
+      "source": "urban renewal",
+      "zh": "城市更新",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "facade",
+      "source": "facade",
+      "zh": "立面",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "façade",
+        "facades"
+      ],
+      "confusions": [
+        "facade",
+        "façade"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "elevation",
+      "source": "elevation",
+      "zh": "立面图",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "elevations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "section",
+      "source": "section",
+      "zh": "剖面图",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "sections"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "floor-plan",
+      "source": "floor plan",
+      "zh": "平面图",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "floor plans"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "load-bearing",
+      "source": "load-bearing",
+      "zh": "承重",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "load bearing"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "cantilever",
+      "source": "cantilever",
+      "zh": "悬臂",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "cantilevers"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "atrium",
+      "source": "atrium",
+      "zh": "中庭",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "atriums",
+        "atria"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "vault",
+      "source": "vault",
+      "zh": "拱顶",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "vaults"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "arch",
+      "source": "arch",
+      "zh": "拱",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "arches"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "beam",
+      "source": "beam",
+      "zh": "梁",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "beams"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "column",
+      "source": "column",
+      "zh": "柱",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "columns"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "foundation",
+      "source": "foundation",
+      "zh": "基础",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "foundations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "circuit",
+      "source": "circuit",
+      "zh": "电路",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "circuits"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "resistor",
+      "source": "resistor",
+      "zh": "电阻器",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "resistors"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "capacitor",
+      "source": "capacitor",
+      "zh": "电容器",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "capacitors"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "inductor",
+      "source": "inductor",
+      "zh": "电感器",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "inductors"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "transistor",
+      "source": "transistor",
+      "zh": "晶体管",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "transistors"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "diode",
+      "source": "diode",
+      "zh": "二极管",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "diodes"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "amplifier",
+      "source": "amplifier",
+      "zh": "放大器",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "amplifiers"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "operational-amplifier",
+      "source": "operational amplifier",
+      "zh": "运算放大器",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "op-amp",
+        "op amp"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "bandwidth",
+      "source": "bandwidth",
+      "zh": "带宽",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "bandwidths"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "modulation",
+      "source": "modulation",
+      "zh": "调制",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "modulations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "demodulation",
+      "source": "demodulation",
+      "zh": "解调",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "demodulations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "analog-to-digital-converter",
+      "source": "analog-to-digital converter",
+      "zh": "模数转换器",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "ADC"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "digital-to-analog-converter",
+      "source": "digital-to-analog converter",
+      "zh": "数模转换器",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "DAC"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "microcontroller",
+      "source": "microcontroller",
+      "zh": "微控制器",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "microcontrollers",
+        "MCU"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "field-programmable-gate-array",
+      "source": "field-programmable gate array",
+      "zh": "现场可编程门阵列",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "FPGA"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "printed-circuit-board",
+      "source": "printed circuit board",
+      "zh": "印制电路板",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "PCB"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "algorithm",
+      "source": "algorithm",
+      "zh": "算法",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "algorithms"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "data-structure",
+      "source": "data structure",
+      "zh": "数据结构",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "data structures"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "database",
+      "source": "database",
+      "zh": "数据库",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "databases"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "operating-system",
+      "source": "operating system",
+      "zh": "操作系统",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "operating systems"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "compiler",
+      "source": "compiler",
+      "zh": "编译器",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "compilers"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "protocol",
+      "source": "protocol",
+      "zh": "协议",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "protocols"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "throughput",
+      "source": "throughput",
+      "zh": "吞吐量",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "through puts"
+      ],
+      "confusions": [
+        "through put"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "latency",
+      "source": "latency",
+      "zh": "延迟",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "latencies"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "distributed-system",
+      "source": "distributed system",
+      "zh": "分布式系统",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "distributed systems"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "cloud-computing",
+      "source": "cloud computing",
+      "zh": "云计算",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "virtual-machine",
+      "source": "virtual machine",
+      "zh": "虚拟机",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "virtual machines"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "encryption",
+      "source": "encryption",
+      "zh": "加密",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [
+        "encryptions"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "authentication",
+      "source": "authentication",
+      "zh": "身份认证",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "authorization",
+      "source": "authorization",
+      "zh": "授权",
+      "domains": [
+        "tech"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    }
+  ]
+}

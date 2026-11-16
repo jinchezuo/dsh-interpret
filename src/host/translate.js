@@ -91,8 +91,9 @@ export class Translator {
     return { routes, picked, error: picked ? '' : (error || '没有任何可用翻译路由') }
   }
 
-  buildPrompt(text, { brief = '', glossary = '', context = '', repair = '' } = {}) {
+  buildPrompt(text, { brief = '', glossary = '', context = '', repair = '', partial = false } = {}) {
     const parts = []
+    if (partial) parts.push('这是说话中的半句，只翻译已经出现的部分，不要补全，也不要输出解释。')
     if (brief) parts.push('场景说明：\n' + brief)
     if (repair) parts.push('上一次译文存在以下问题，本次必须修正：\n' + repair)
     if (glossary) parts.push('术语要求：\n' + glossary)

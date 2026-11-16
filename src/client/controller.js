@@ -12,6 +12,8 @@ const EMPTY = {
   testBusy: false,
   testResult: null,
   draft: null,
+  live: {},
+  termSearch: { query: '', results: [], busy: false },
   glossary: null,
   history: null,
   historyView: null,
@@ -39,6 +41,7 @@ export class Controller {
       onError: (error) => this.fail(error),
     })
     this.inFlight = 0
+    this.lastReport = 0
     this.disposed = false
   }
 
@@ -83,6 +86,26 @@ export class Controller {
     this.update({ level })
   }
 
+  report(type, extra = {}) {
+    const now = Date.now()
+    if (now - this.lastReport < 350) return
+    this.lastReport = now
+    fetch('/interpret/api/client-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type,
+        connection: this.snapshot.connection,
+        phase: this.snapshot.state?.phase || null,
+        segments: this.snapshot.segments.length,
+        draft: Boolean(this.snapshot.draft),
+        error: this.snapshot.error || null,
+        ...extra,
+      }),
+      cache: 'no-store',
+    }).catch(() => {})
+  }
+
   fail(error) {
     const message = error?.message ? messageOf(error) : messageOf(error)
     this.update({ error: message })
@@ -95,7 +118,6 @@ export class Controller {
       this.es = new EventSource('/interpret/api/events')
       this.es.onopen = () => {
         this.update({ connection: 'open' })
-        this.stopPolling()
       }
       this.es.onerror = () => {
         this.update({ connection: 'closed' })
@@ -113,12 +135,23 @@ export class Controller {
     this.loadGlossary()
     this.loadSessions()
     this.loadModels()
+    // Committed captions are authoritative in the host. A slow poll keeps the
+    // list correct even if the SSE connection is open but silent after a reload.
+    this.startPolling(1800)
   }
 
   handleEvent(type, data) {
     if (!type) return
     if (type === 'state') {
-      this.setState(data, { status: 'ready' })
+      this.setState(data, { status: 'ready', live: data?.live || this.snapshot.live })
+      this.report('state')
+      return
+    }
+    if (type === 'live') {
+      const live = { ...this.snapshot.live }
+      if (data?.cleared) delete live[data.track]
+      else if (data?.track && data.en) live[data.track] = data
+      this.update({ live })
       return
     }
     if (type === 'draft') {
@@ -132,12 +165,18 @@ export class Controller {
     if (type === 'caption') {
       if (!data?.id) return
       if (this.snapshot.draft && this.snapshot.draft.track === data.track) this.update({ draft: null })
+      if (this.snapshot.live[data.track]) {
+        const live = { ...this.snapshot.live }
+        delete live[data.track]
+        this.update({ live })
+      }
       this.segmentMap.set(data.id, data)
       const segments = [...this.segmentMap.values()].sort((a, b) => (a.seq || 0) - (b.seq || 0))
       if (segments.length > 800) {
         for (const segment of segments.slice(0, segments.length - 800)) this.segmentMap.delete(segment.id)
       }
       this.update({ segments: segments.slice(-800), status: 'ready' })
+      this.report('caption', { segmentStatus: data.status })
       return
     }
     if (type === 'stats') {
@@ -155,9 +194,9 @@ export class Controller {
     }
   }
 
-  startPolling() {
+  startPolling(intervalMs = 1200) {
     if (this.pollTimer) return
-    this.pollTimer = setInterval(() => { this.refresh() }, 1200)
+    this.pollTimer = setInterval(() => { this.refresh() }, intervalMs)
   }
 
   stopPolling() {
@@ -185,19 +224,25 @@ export class Controller {
   }
 
   async refresh() {
+    if (this.refreshing) return
+    this.refreshing = true
     try {
       const payload = await this.request('/state')
       const map = new Map()
       for (const segment of payload.segments || []) map.set(segment.id, segment)
       this.segmentMap = map
+      this.report('refresh', { count: payload.segments?.length || 0 })
       this.setState(payload.data, {
         status: 'ready',
         segments: [...map.values()].sort((a, b) => (a.seq || 0) - (b.seq || 0)).slice(-800),
         error: payload.data?.error?.message || null,
         draft: null,
+        live: payload.data?.live || {},
       })
     } catch (error) {
       this.update({ status: 'error', error: messageOf(error) })
+    } finally {
+      this.refreshing = false
     }
   }
 
@@ -209,7 +254,7 @@ export class Controller {
       await this.capture.start()
       const payload = await this.request('/session/start', { method: 'POST', body: { title: '' } })
       this.segmentMap = new Map()
-      this.setState(payload.data, { segments: [], draft: null, error: null, status: 'ready' })
+      this.setState(payload.data, { segments: [], draft: null, live: {}, error: null, status: 'ready' })
     } catch (error) {
       this.capture.stop()
       this.update({ error: messageOf(error) })
@@ -224,7 +269,7 @@ export class Controller {
     this.capture.stop()
     try {
       const payload = await this.request('/session/stop', { method: 'POST' })
-      this.setState(payload.data, { status: 'ready' })
+      this.setState(payload.data, { status: 'ready', live: {}, draft: null })
     } catch (error) {
       this.update({ error: messageOf(error) })
     } finally {
@@ -313,6 +358,36 @@ export class Controller {
   async prepareVad() {
     try {
       await this.request('/models/vad/prepare', { method: 'POST', body: {} })
+      await this.loadModels()
+      await this.refresh()
+    } catch (error) {
+      this.update({ error: messageOf(error) })
+    }
+  }
+
+  async searchTerminology(query, domain = '') {
+    const value = String(query || '').trim()
+    if (!value) {
+      this.update({ termSearch: { query: '', results: [], busy: false } })
+      return []
+    }
+    this.update({ termSearch: { ...this.snapshot.termSearch, query: value, busy: true } })
+    try {
+      const params = new URLSearchParams({ q: value, limit: '12' })
+      if (domain && domain !== 'auto' && domain !== 'all') params.set('domain', domain)
+      const payload = await this.request('/terminology/search?' + params.toString())
+      const results = payload.data || []
+      this.update({ termSearch: { query: value, results, busy: false } })
+      return results
+    } catch (error) {
+      this.update({ termSearch: { query: value, results: [], busy: false }, error: messageOf(error) })
+      return []
+    }
+  }
+
+  async prepareStreaming() {
+    try {
+      await this.request('/models/streaming/prepare', { method: 'POST', body: {} })
       await this.loadModels()
       await this.refresh()
     } catch (error) {

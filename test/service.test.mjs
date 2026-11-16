@@ -27,7 +27,13 @@ function fakeContext({ text, outputs }) {
   const llm = {
     listProviders: async () => [{ id: 'deepseek-account', name: 'DeepSeek' }],
     listModels: async () => [{ id: 'deepseek-flash', name: 'DeepSeek Flash' }],
-    stream: async () => (async function* () {
+    stream: async (request) => (async function* () {
+      const prompt = request?.messages?.[0]?.content?.[0]?.text || ''
+      if (prompt.includes('候选术语')) {
+        yield { type: 'text-delta', text: '{"corrections":[]}' }
+        yield { type: 'finish', reason: { kind: 'stop' } }
+        return
+      }
       const output = outputs[Math.min(calls, outputs.length - 1)]
       calls += 1
       yield { type: 'text-delta', text: output }

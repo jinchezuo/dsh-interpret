@@ -20,3 +20,13 @@ path runs.
 
 Model weights are never committed to this repository or packaged into the npm
 bundle.
+
+## Terminology data
+
+The generated corpus in assets/terminology is derived from Wikipedia glossaries
+(CC BY-SA 4.0), Britfone British IPA (MIT, Copyright (c) 2017 Jose Llarena), and
+the CMU Pronouncing Dictionary (BSD-2-Clause, Copyright (C) 1993-2015 Carnegie
+Mellon University), plus a project-curated core. See
+assets/terminology/DATA-LICENSES.md for sources, links, and attribution. The
+data is CC BY-SA 4.0 where derived from Wikipedia; the plugin code is MIT.
+Model and dictionary source files are not redistributed.

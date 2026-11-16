@@ -1,10 +1,10 @@
 import { createElement as h, useEffect, useRef, useSyncExternalStore } from 'react'
-import { CaptionRow, fmtClock } from './panel.js'
+import { CaptionRow, LiveRow, fmtClock } from './panel.js'
 
 /** Compact docked caption view for the right sidebar tab. */
 export function CaptionDock({ controller }) {
   const snapshot = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot)
-  const { state, segments, busy, connection, error, draft } = snapshot
+  const { state, segments, busy, connection, error, draft, live } = snapshot
   const listRef = useRef(null)
   const stickRef = useRef(true)
   const running = state?.phase === 'listening'
@@ -15,12 +15,13 @@ export function CaptionDock({ controller }) {
   const autoTranslate = state?.config?.autoTranslate !== false
   const canStart = !busy && !running && !stopping && providerReady && (!autoTranslate || Boolean(mt?.provider))
   const visible = segments.filter((segment) => segment.status !== 'dropped').slice(-60)
+  const liveRows = [live?.mic, live?.system].filter((item) => item?.en)
   const elapsed = running ? snapshot.elapsed : (state?.elapsedMs || 0)
 
   useEffect(() => {
     const el = listRef.current
     if (el && stickRef.current) el.scrollTop = el.scrollHeight
-  }, [segments.length])
+  }, [segments.length, live?.mic?.en, live?.system?.en])
 
   const onScroll = () => {
     const el = listRef.current
@@ -40,9 +41,10 @@ export function CaptionDock({ controller }) {
     h('div', { className: 'di-list di-dock-list', ref: listRef, onScroll },
       visible.length
         ? visible.map((segment) => h(CaptionRow, { key: segment.id, segment }))
-        : h('div', { className: 'di-empty' },
+        : (liveRows.length ? null : h('div', { className: 'di-empty' },
             h('strong', null, running ? '正在聆听…' : '等待开始'),
-            h('div', null, running ? '英中字幕会出现在这里。' : '可在主面板开始，或点这里直接开始。')),
+            h('div', null, running ? '英文逐词出现，中文随后更新。' : '可在主面板开始，或点这里直接开始。'))),
+      liveRows.map((item) => h(LiveRow, { key: 'live-' + item.track, item, showZh: autoTranslate })),
       draft?.en ? h('div', { className: 'di-row di-draft' }, h('div', { className: 'di-meta' }, '草稿'), h('div', { className: 'di-en' }, draft.en)) : null,
       h('div', { style: { height: '1px' } })),
     h('div', { className: 'di-footer' },

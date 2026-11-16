@@ -85,6 +85,10 @@ export function CaptionRow({ segment }) {
       h('span', { className: 'di-src' }, segment.track === 'system' ? '系统音频' : '麦克风'),
       segment.asrMs ? h('span', null, 'ASR ' + segment.asrMs + 'ms') : null,
       segment.mtMs ? h('span', null, 'MT ' + segment.mtMs + 'ms') : null,
+      segment.termCorrections?.length ? h('span', {
+        className: 'di-badge',
+        title: segment.termCorrections.map((item) => item.from + ' → ' + item.to).join('\n'),
+      }, '术语校正 ×' + segment.termCorrections.length) : null,
       h(StatusBadge, { segment })),
     h('div', { className: 'di-en' }, segment.en || '…'),
     segment.zh
@@ -93,9 +97,29 @@ export function CaptionRow({ segment }) {
     segment.error ? h('div', { className: 'di-note' }, segment.error.code + ': ' + segment.error.message) : null)
 }
 
+export function LiveRow({ item, showZh = true }) {
+  if (!item?.en) return null
+  const track = item.track === 'system' ? '系统音频' : '麦克风'
+  return h('div', { className: 'di-row di-live' },
+    h('div', { className: 'di-meta' },
+      h('span', { className: 'di-time' }, '实时'),
+      h('span', { className: 'di-src' }, track),
+      h('span', { className: 'di-badge' }, '逐词'),
+      item.termCorrections?.length ? h('span', {
+        className: 'di-badge',
+        title: item.termCorrections.map((entry) => entry.from + ' → ' + entry.to).join('\n'),
+      }, '术语校正 ×' + item.termCorrections.length) : null),
+    h('div', { className: 'di-en di-live-en' }, item.en),
+    showZh
+      ? (item.zh
+          ? h('div', { className: 'di-zh provisional' }, item.zh)
+          : h('div', { className: 'di-zh pending' }, '翻译中…'))
+      : null)
+}
+
 export function PanelView({ controller, openDock, dockAvailable }) {
   const snapshot = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot)
-  const { state, segments, busy, error, connection, modelProgress, elapsed, testResult, testBusy, draft, history, historyView, models } = snapshot
+  const { state, segments, busy, error, connection, modelProgress, elapsed, testResult, testBusy, draft, live, termSearch, history, historyView, models } = snapshot
   const listRef = useRef(null)
   const stickRef = useRef(true)
   const [showDropped, setShowDropped] = useState(false)
@@ -106,6 +130,7 @@ export function PanelView({ controller, openDock, dockAvailable }) {
   const [glossaryDirty, setGlossaryDirty] = useState(false)
   const [brief, setBrief] = useState('')
   const [briefDirty, setBriefDirty] = useState(false)
+  const [termQuery, setTermQuery] = useState('')
   const glossary = snapshot.glossary
 
   useEffect(() => {
@@ -143,7 +168,7 @@ export function PanelView({ controller, openDock, dockAvailable }) {
     const el = listRef.current
     if (!el) return
     if (stickRef.current) el.scrollTop = el.scrollHeight
-  }, [segments.length])
+  }, [segments.length, live?.mic?.en, live?.system?.en, live?.mic?.zh, live?.system?.zh])
 
   useEffect(() => {
     if (!state) controller.refresh()
@@ -156,6 +181,7 @@ export function PanelView({ controller, openDock, dockAvailable }) {
   const autoTranslate = state?.config?.autoTranslate !== false
   const mt = state?.mt
   const visible = segments.filter((segment) => showDropped || segment.status !== 'dropped')
+  const liveRows = [live?.mic, live?.system].filter((item) => item?.en)
   const errorText = error || state?.lastError?.message || ''
   const showError = errorText && dismissed !== errorText
   const blockedReason = !providerReady
@@ -217,11 +243,12 @@ export function PanelView({ controller, openDock, dockAvailable }) {
         h('div', { className: 'di-list', ref: listRef, onScroll },
           visible.length
             ? visible.map((segment) => h(CaptionRow, { key: segment.id, segment }))
-            : h('div', { className: 'di-empty' },
+            : (liveRows.length ? null : h('div', { className: 'di-empty' },
                 h('strong', null, running ? '正在聆听英文讲解…' : '准备开始实时英中字幕'),
                 h('div', null, running
-                  ? '说完一句话后，英文原句与中文译文会依次出现。'
-                  : '点击右上角「开始同传」，允许麦克风后即可实时显示英文原句与中文译文。')),
+                  ? '英文会逐词出现，中文译文随后更新。'
+                  : '点击右上角「开始同传」，允许麦克风后即可实时显示英文原句与中文译文。'))),
+          liveRows.map((item) => h(LiveRow, { key: 'live-' + item.track, item, showZh: autoTranslate })),
           draft?.en ? h('div', { className: 'di-row di-draft' },
             h('div', { className: 'di-meta' }, '草稿 · ' + (draft.track === 'system' ? '系统音频' : '麦克风')),
             h('div', { className: 'di-en di-draft-en' }, draft.en)) : null,
@@ -251,6 +278,71 @@ export function PanelView({ controller, openDock, dockAvailable }) {
             h('span', { className: 'di-note' }, '首次约 239MB，仅下载一次。')) : h('div', { className: 'di-note' }, '本机识别，音频不出机器。')),
 
         h('section', { className: 'di-card' },
+          h('h4', null, '逐词实时'),
+          h(Kv, { label: '模式', value: state?.config?.streamingMode === 'off' ? '关闭' : (models?.streaming?.ready ? '已就绪' : '未下载') }),
+          h('select', {
+            className: 'di-select',
+            value: state?.config?.streamingMode || 'auto',
+            onChange: (event) => controller.saveConfig({ streamingMode: event.target.value }),
+          }, ['auto', 'on', 'off'].map((mode) => h('option', { key: mode, value: mode }, mode === 'auto' ? '自动（推荐）' : mode === 'on' ? '必须逐词' : '关闭（整段回退）'))),
+          models?.streaming?.ready
+            ? h('div', { className: 'di-note' }, '英文流式模型已就绪，边说边出词。')
+            : h('div', { className: 'di-actions' },
+                h('button', {
+                  className: 'di-btn primary',
+                  disabled: busy || (models?.streaming?.progress || state?.streaming?.progress)?.phase === 'downloading',
+                  onClick: () => controller.prepareStreaming(),
+                }, (models?.streaming?.progress || state?.streaming?.progress)?.phase === 'downloading' ? '下载中…' : '下载逐词模型（73MB）'),
+                h('span', { className: 'di-note' }, '首次下载，仅用于实时英文。')),
+          (models?.streaming?.progress || state?.streaming?.progress)?.phase === 'downloading'
+            ? h('div', { className: 'di-note' }, '流式模型 ' + ((models?.streaming?.progress || state?.streaming?.progress).completedBytes / 1048576).toFixed(0) + '/' + ((models?.streaming?.progress || state?.streaming?.progress).totalBytes / 1048576).toFixed(0) + 'MB')
+            : null,
+          h('div', { className: 'di-note' }, '定稿仍由 Parakeet 复核，术语更准。')),
+
+        h('section', { className: 'di-card' },
+          h('h4', null, '学科术语 RAG'),
+          h(Kv, { label: '术语库', value: state?.terminology?.ready ? (state.terminology.count + ' 条') : '未加载' }),
+          h(Kv, { label: '中文/音标', value: state?.terminology?.ready ? (state.terminology.zhCount + ' / ' + state.terminology.ipaCount) : '—' }),
+          h('select', {
+            className: 'di-select',
+            value: state?.config?.terminologyDomains || 'auto',
+            onChange: (event) => controller.saveConfig({ terminologyDomains: event.target.value }),
+          }, [
+            ['auto', '自动识别学科'], ['all', '全部学科'], ['ai', '人工智能'], ['math', '数学'], ['statistics', '统计'],
+            ['biology', '生物'], ['urban', '城市规划'], ['architecture', '建筑'], ['electronics', '电子信息'], ['tech', '通用科技'],
+          ].map(([value, label]) => h('option', { key: value, value }, label))),
+          h('select', {
+            className: 'di-select',
+            value: state?.config?.terminologyMode || 'auto',
+            onChange: (event) => controller.saveConfig({ terminologyMode: event.target.value }),
+          }, [['auto', '术语 RAG 自动'], ['on', '强制启用'], ['off', '关闭']].map(([value, label]) => h('option', { key: value, value }, label))),
+          h('label', { className: 'di-note', style: { display: 'flex', gap: '6px', alignItems: 'center', marginTop: '4px' } },
+            h('input', {
+              type: 'checkbox',
+              checked: state?.config?.termCorrection !== false,
+              onChange: (event) => controller.saveConfig({ termCorrection: event.target.checked }),
+            }),
+            '术语自动校正（定稿 + 实时）'),
+          h('div', { className: 'di-actions' },
+            h('input', {
+              className: 'di-select',
+              style: { flex: 1, minWidth: 0 },
+              value: termQuery,
+              placeholder: '查术语 / 音标，如 large language model',
+              onChange: (event) => setTermQuery(event.target.value),
+              onKeyDown: (event) => { if (event.key === 'Enter') controller.searchTerminology(termQuery, state?.config?.terminologyDomains) },
+            }),
+            h('button', { className: 'di-btn', disabled: termSearch?.busy, onClick: () => controller.searchTerminology(termQuery, state?.config?.terminologyDomains) }, termSearch?.busy ? '查询中' : '查询')),
+          termSearch?.results?.length
+            ? h('div', { className: 'di-term-results' }, termSearch.results.slice(0, 8).map((term) =>
+                h('div', { key: term.source, className: 'di-term' },
+                  h('div', { className: 'di-term-head' }, h('strong', null, term.source), h('span', null, term.zh || '（无中文）')),
+                  term.ipaUk || term.ipaUs ? h('div', { className: 'di-note' }, [term.ipaUk && ('UK ' + term.ipaUk), term.ipaUs && ('US ' + term.ipaUs)].filter(Boolean).join('  ·  ')) : null,
+                  h('div', { className: 'di-note' }, (term.domains || []).join('/') + (term.definition ? ' · ' + term.definition.slice(0, 140) : '')))))
+            : null,
+          h('div', { className: 'di-note' }, '本地术语库；定稿时用 RAG 检索 + 模型校验，实时行只做高置信别名纠正。')),
+
+        h('section', { className: 'di-card' },
           h('h4', null, '降噪 / VAD'),
           h(Kv, { label: '模式', value: state?.config?.vadMode === 'energy' ? '能量 VAD' : (models?.vad?.ready ? 'Silero + 能量回退' : '能量 VAD（Silero 未下载）') }),
           h('select', {
@@ -273,6 +365,13 @@ export function PanelView({ controller, openDock, dockAvailable }) {
               onChange: (event) => controller.saveConfig({ autoTranslate: event.target.checked }),
             }),
             '启用中文翻译'),
+          h('label', { className: 'di-note', style: { display: 'flex', gap: '6px', alignItems: 'center', marginTop: '4px' } },
+            h('input', {
+              type: 'checkbox',
+              checked: state?.config?.liveTranslate !== false,
+              onChange: (event) => controller.saveConfig({ liveTranslate: event.target.checked }),
+            }),
+            '中文草稿同步（边听边译）'),
           h('label', { className: 'di-note', style: { display: 'flex', gap: '6px', alignItems: 'center', marginTop: '4px' } },
             h('input', {
               type: 'checkbox',
@@ -356,6 +455,8 @@ export function PanelView({ controller, openDock, dockAvailable }) {
           h(Kv, { label: 'ASR 平均', value: state?.stats?.avgAsrMs ? state.stats.avgAsrMs + 'ms' : '—' }),
           h(Kv, { label: '翻译平均', value: state?.stats?.avgMtMs ? state.stats.avgMtMs + 'ms' : '—' }),
           h(Kv, { label: '首字平均', value: state?.stats?.avgFirstTokenMs ? state.stats.avgFirstTokenMs + 'ms' : '—' }),
+          h(Kv, { label: '实时更新', value: String(state?.stats?.liveUpdates ?? 0) }),
+          h(Kv, { label: '中文草稿', value: String(state?.stats?.liveTranslateCount ?? 0) }),
           h(Kv, { label: '术语纠正', value: String(state?.stats?.termRepairs ?? 0) }),
           h(Kv, { label: '质检修正', value: String(state?.stats?.qaRepairs ?? 0) }),
           h('label', { className: 'di-note', style: { display: 'flex', gap: '6px', alignItems: 'center', marginTop: '8px' } },

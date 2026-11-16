@@ -1,8 +1,10 @@
 import { spawn } from 'node:child_process'
 import { createRequire } from 'node:module'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import { mkdir, readdir, readFile, rm, stat } from 'node:fs/promises'
+import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { decodeWav } from './audio.js'
 
 const HELPER_RELATIVE = 'recording-helper/DSHASRRecordingHelper.app/Contents/Helpers/dsh-asr-capture-system'
@@ -10,18 +12,31 @@ const HELPER_RELATIVE = 'recording-helper/DSHASRRecordingHelper.app/Contents/Hel
 /** Locate the signed ScreenCaptureKit helper shipped by @huliux/dsh-asr-plugin. */
 export function findSystemCaptureHelper() {
   const candidates = []
-  const profileDir = String(process.env.DSH_PROFILE_DIR || '').trim()
-  if (profileDir) candidates.push(join(profileDir, 'node_modules', '@huliux', 'dsh-asr-plugin', 'dist', HELPER_RELATIVE))
+  const addProfile = (dir) => {
+    if (dir) candidates.push(join(dir, 'node_modules', '@huliux', 'dsh-asr-plugin', 'dist', HELPER_RELATIVE))
+  }
+  addProfile(String(process.env.DSH_PROFILE_DIR || '').trim())
+  const home = String(process.env.DSH_HOME || '').trim() || join(homedir(), '.dsh')
+  const profile = String(process.env.DSH_PROFILE || '').trim()
+  if (profile) addProfile(join(home, 'profiles', profile))
+  try {
+    for (const name of readdirSync(join(home, 'profiles'))) addProfile(join(home, 'profiles', name))
+  } catch {}
+  addProfile(join(home, 'profiles', 'desktop'))
   try {
     const require = createRequire(import.meta.url)
     const entry = require.resolve('@huliux/dsh-asr-plugin')
     candidates.push(join(dirname(entry), HELPER_RELATIVE))
   } catch {}
-  for (const candidate of candidates) {
-    if (existsSync(candidate)) return { path: candidate, candidates }
+  const pluginRoot = fileURLToPath(new URL('../../', import.meta.url))
+  candidates.push(join(pluginRoot, 'node_modules', '@huliux', 'dsh-asr-plugin', 'dist', HELPER_RELATIVE))
+  const unique = [...new Set(candidates)]
+  for (const candidate of unique) {
+    if (existsSync(candidate)) return { path: candidate, candidates: unique }
   }
-  return { path: null, candidates }
+  return { path: null, candidates: unique }
 }
+
 
 /**
  * Spawn the external capture helper and turn its 1-second WAV chunks into

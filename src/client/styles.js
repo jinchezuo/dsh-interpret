@@ -106,6 +106,17 @@ const CSS = String.raw`
 .di-result { font-size: 12px; border-left: 2px solid var(--di-accent); padding-left: 8px; white-space: pre-wrap; }
 .di-footer { flex: none; border-top: 1px solid var(--di-border); padding: 6px 16px; color: var(--di-muted); font-size: 11px; display: flex; gap: 14px; align-items: center; }
 .di-footer .di-spacer { flex: 1; }
+.di-term-results { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow: auto; }
+.di-term { padding: 6px 8px; border: 1px solid var(--di-border); border-radius: 8px; background: var(--di-raised); }
+.di-term-head { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; }
+.di-term-head strong { font-size: 13px; }
+.di-term .di-note { font-size: 11px; margin-top: 2px; }
+.di-live { background: linear-gradient(90deg, rgba(79,124,255,.08), transparent 70%); border-left: 2px solid var(--di-accent); padding-left: 8px; border-bottom-style: solid; }
+.di-live .di-meta { color: var(--di-accent); }
+.di-live-en { color: var(--di-fg); font-size: 15px; }
+.di-live-en::after { content: ''; display: inline-block; width: 2px; height: 1em; margin-left: 3px; vertical-align: -2px; background: var(--di-accent); animation: di-caret 1s steps(1) infinite; }
+.di-zh.provisional { color: var(--di-muted); font-size: 14px; }
+@keyframes di-caret { 50% { opacity: 0; } }
 .di-draft { opacity: .66; border-bottom-style: dotted; }
 .di-draft .di-meta { color: var(--di-accent); }
 .di-draft-en { font-style: italic; }

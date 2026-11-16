@@ -12,7 +12,9 @@ DeepSeek Harness 的本地插件：把现场英文讲解（麦克风）或电脑
   - Parakeet TDT 0.6B v2（英文，int8）：默认学术模式，实测 6.9 秒英文句子约 177–186ms 解码，能正确识别 eigenvalue / Hamiltonian / Hermitian 等术语。
   - SenseVoice（官方 speechToText provider）：轻量多语种备选，首次约 239MB。
 - 英译中：走 DSH 已配置的 LLM 路由（默认优先 flash 模型），流式显示中文草稿，保序串行队列。
-- 学术术语：内置约 100 条种子术语；支持 CSV/TSV/TMX/JSON 导入；术语强制一致、数字/单位质检、失败自动重译一次、ASR 拼写近似纠正（例如 Egenvalu → eigenvalue）。
+- 学术术语：内置约 100 条用户种子术语 + 约 3,000 条八学科术语 RAG（AI、数学、统计、生物、城市规划、建筑、电子信息、通用科技），含英文释义、UK/US 音标、别名和常见误听；定稿前用混合检索 + LLM 校验纠正短语级误听（如 laboratory model → large language model），并做学科门控，避免生物语境的合法 laboratory model 被误改。
+- 术语工具：主面板可切换自动/指定学科、开关术语校正、搜索术语并查看 UK/US IPA 与中文；导入 CSV/TSV/TMX/JSON。
+- 数据构建：node scripts/build-terminology.mjs（Wikipedia 术语表 + Britfone + CMUdict；构建缓存 .cache/terminology，产物 assets/terminology）。
 - 噪声/非英语过滤：Silero VAD（缺失时自动回退能量 VAD）+ 自适应噪声底 + 麦克风/系统音频回声去重 + 英文字符/中文占比/重复幻听过滤。
 - 会话落盘与历史：JSON/JSONL、历史列表、查看/重命名/删除、按会话导出；英文/中文/双语 SRT、Markdown。
 - 数据默认在 ~/.dsh/interpret；音频只在本机识别，只有识别文本会发给你配置的 DSH 模型路由。
@@ -49,11 +51,13 @@ DeepSeek Harness 的本地插件：把现场英文讲解（麦克风）或电脑
 
 ## API
 
-同源接口前缀 /interpret/api：/state、/events（SSE）、/session/start、/session/stop、/audio/mic、/audio/system、/prepare、/prepare/cancel、/models、/models/vad/prepare、/translate、/config、/glossary、/sessions、/sessions/:id、/export、/client-ready。健康检查 /interpret/api/health。
+同源接口前缀 /interpret/api：/state、/events（SSE）、/session/start、/session/stop、/audio/mic、/audio/system、/prepare、/prepare/cancel、/models、/models/vad/prepare、/models/streaming/prepare、/terminology/stats、/terminology/search、/translate、/config、/glossary、/sessions、/sessions/:id、/export、/client-ready。健康检查 /interpret/api/health。
 
 ## 已知限制
 
-- 句级近实时 + 灰色草稿（开口约 1.2–1.8 秒出英文草稿）；还不是词级流式。
+- 逐词流式英文（约 160–320ms 更新）+ Parakeet 定稿复核；实时行是 provisional，句尾会替换为校正后的定稿。
+- 术语库当前约 3,050 条，8 学科；中文名 280 条、UK/US 音标 1,554 条。Wikipedia 分类扩展和批量中文补全受 API 限流影响，可后续用 EXPAND_CATEGORIES=1 / FETCH_LANG=1 重跑构建脚本。
+- 术语 RAG 的实时纠正只使用高置信别名/人工误听表；完整 LLM 校正只发生在定稿，避免实时行抖动和误改。
 - 系统音频依赖 dsh-asr-plugin 的采集助手与 macOS 屏幕/系统音频权限；没有该插件时仅麦克风可用。
 - 说话人标签、CAIT 直接写入、Agent 操作工具尚未实现；当前用 Markdown/SRT 交接给 CAIT/其他工具。
 - 首次下载模型需要网络；模型权重不随插件分发。

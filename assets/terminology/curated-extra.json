@@ -1,0 +1,1119 @@
+{
+  "version": 1,
+  "note": "补充学科术语",
+  "terms": [
+    {
+      "id": "urban-planning",
+      "source": "urban planning",
+      "zh": "城市规划",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "town planning"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "zoning-ordinance",
+      "source": "zoning ordinance",
+      "zh": "区划条例",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "zoning ordinances"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "land-use-planning",
+      "source": "land-use planning",
+      "zh": "土地利用规划",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "land use planning"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "comprehensive-planning",
+      "source": "comprehensive planning",
+      "zh": "综合规划",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "comprehensive plan"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "master-plan",
+      "source": "master plan",
+      "zh": "总体规划",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "master plans"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "mixed-use-zoning",
+      "source": "mixed-use zoning",
+      "zh": "混合用途区划",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "mixed use zoning"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "density-bonus",
+      "source": "density bonus",
+      "zh": "密度奖励",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "density bonuses"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "setback",
+      "source": "setback",
+      "zh": "建筑退线",
+      "domains": [
+        "urban",
+        "architecture"
+      ],
+      "aliases": [
+        "setbacks"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "public-realm",
+      "source": "public realm",
+      "zh": "公共空间",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "public realms"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "walkability",
+      "source": "walkability",
+      "zh": "步行友好度",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "traffic-calming",
+      "source": "traffic calming",
+      "zh": "交通稳静化",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "complete-streets",
+      "source": "complete streets",
+      "zh": "完整街道",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "smart-growth",
+      "source": "smart growth",
+      "zh": "精明增长",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "new-urbanism",
+      "source": "new urbanism",
+      "zh": "新城市主义",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "inclusionary-zoning",
+      "source": "inclusionary zoning",
+      "zh": "包容性区划",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "metropolitan-area",
+      "source": "metropolitan area",
+      "zh": "大都市区",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "metropolitan areas"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "stormwater-management",
+      "source": "stormwater management",
+      "zh": "雨洪管理",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "storm water management"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "transit-corridor",
+      "source": "transit corridor",
+      "zh": "交通走廊",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "transit corridors"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "bus-rapid-transit",
+      "source": "bus rapid transit",
+      "zh": "快速公交",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "BRT"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "light-rail",
+      "source": "light rail",
+      "zh": "轻轨",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "light rail transit"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "form-based-code",
+      "source": "form-based code",
+      "zh": "形态导则",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "form based code"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "overlay-district",
+      "source": "overlay district",
+      "zh": "叠加区",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "overlay districts"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "eminent-domain",
+      "source": "eminent domain",
+      "zh": "征收权",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "environmental-impact-statement",
+      "source": "environmental impact statement",
+      "zh": "环境影响报告",
+      "domains": [
+        "urban"
+      ],
+      "aliases": [
+        "EIS"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "curtain-wall",
+      "source": "curtain wall",
+      "zh": "幕墙",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "curtain walls"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "structural-system",
+      "source": "structural system",
+      "zh": "结构体系",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "structural systems"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "reinforced-concrete",
+      "source": "reinforced concrete",
+      "zh": "钢筋混凝土",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "steel-frame",
+      "source": "steel frame",
+      "zh": "钢框架",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "steel frames"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "post-and-lintel",
+      "source": "post-and-lintel",
+      "zh": "梁柱结构",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "post and lintel"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "architrave",
+      "source": "architrave",
+      "zh": "柱顶过梁",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "architraves"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "cornice",
+      "source": "cornice",
+      "zh": "檐口",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "cornices"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "portico",
+      "source": "portico",
+      "zh": "门廊",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [
+        "porticos",
+        "porticoes"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "brutalism",
+      "source": "brutalism",
+      "zh": "粗野主义",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "modernism",
+      "source": "modernism",
+      "zh": "现代主义",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "vernacular-architecture",
+      "source": "vernacular architecture",
+      "zh": "乡土建筑",
+      "domains": [
+        "architecture"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "group-theory",
+      "source": "group theory",
+      "zh": "群论",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "ring-theory",
+      "source": "ring theory",
+      "zh": "环论",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "field-theory",
+      "source": "field theory",
+      "zh": "域论",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "linear-algebra",
+      "source": "linear algebra",
+      "zh": "线性代数",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "calculus",
+      "source": "calculus",
+      "zh": "微积分",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "real-analysis",
+      "source": "real analysis",
+      "zh": "实分析",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "complex-analysis",
+      "source": "complex analysis",
+      "zh": "复分析",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "functional-analysis",
+      "source": "functional analysis",
+      "zh": "泛函分析",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "differential-equation",
+      "source": "differential equation",
+      "zh": "微分方程",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "differential equations"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "partial-differential-equation",
+      "source": "partial differential equation",
+      "zh": "偏微分方程",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "partial differential equations",
+        "PDE"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "ordinary-differential-equation",
+      "source": "ordinary differential equation",
+      "zh": "常微分方程",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "ordinary differential equations",
+        "ODE"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "probability-space",
+      "source": "probability space",
+      "zh": "概率空间",
+      "domains": [
+        "math",
+        "statistics"
+      ],
+      "aliases": [
+        "probability spaces"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "measure-theory",
+      "source": "measure theory",
+      "zh": "测度论",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "operator",
+      "source": "operator",
+      "zh": "算子",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "operators"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "spectrum",
+      "source": "spectrum",
+      "zh": "谱",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "spectra"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "singular-value-decomposition",
+      "source": "singular value decomposition",
+      "zh": "奇异值分解",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "SVD"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "qr-decomposition",
+      "source": "QR decomposition",
+      "zh": "QR 分解",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "QR factorization"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "lu-decomposition",
+      "source": "LU decomposition",
+      "zh": "LU 分解",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "LU factorization"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "positive-definite",
+      "source": "positive definite",
+      "zh": "正定的",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "convex-function",
+      "source": "convex function",
+      "zh": "凸函数",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "convex functions"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "optimization",
+      "source": "optimization",
+      "zh": "优化",
+      "domains": [
+        "math",
+        "ai"
+      ],
+      "aliases": [
+        "optimisation"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "constraint",
+      "source": "constraint",
+      "zh": "约束",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "constraints"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "lagrange-multiplier",
+      "source": "Lagrange multiplier",
+      "zh": "拉格朗日乘子",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "Lagrange multipliers"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "dual-space",
+      "source": "dual space",
+      "zh": "对偶空间",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "dual spaces"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "tensor",
+      "source": "tensor",
+      "zh": "张量",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "tensors"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "gradient",
+      "source": "gradient",
+      "zh": "梯度",
+      "domains": [
+        "math",
+        "ai"
+      ],
+      "aliases": [
+        "gradients"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "divergence",
+      "source": "divergence",
+      "zh": "散度",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "curl",
+      "source": "curl",
+      "zh": "旋度",
+      "domains": [
+        "math"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "laplace-operator",
+      "source": "Laplace operator",
+      "zh": "拉普拉斯算子",
+      "domains": [
+        "math"
+      ],
+      "aliases": [
+        "Laplacian"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "estimator",
+      "source": "estimator",
+      "zh": "估计量",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "estimators"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "unbiased-estimator",
+      "source": "unbiased estimator",
+      "zh": "无偏估计",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "unbiased estimators"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "sampling-distribution",
+      "source": "sampling distribution",
+      "zh": "抽样分布",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "sampling distributions"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "central-limit-theorem",
+      "source": "central limit theorem",
+      "zh": "中心极限定理",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "CLT"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "law-of-large-numbers",
+      "source": "law of large numbers",
+      "zh": "大数定律",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "markov-chain",
+      "source": "Markov chain",
+      "zh": "马尔可夫链",
+      "domains": [
+        "statistics",
+        "math"
+      ],
+      "aliases": [
+        "Markov chains"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "monte-carlo",
+      "source": "Monte Carlo",
+      "zh": "蒙特卡洛",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "Monte Carlo method"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "principal-component-analysis",
+      "source": "principal component analysis",
+      "zh": "主成分分析",
+      "domains": [
+        "statistics",
+        "ai"
+      ],
+      "aliases": [
+        "PCA"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "factor-analysis",
+      "source": "factor analysis",
+      "zh": "因子分析",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "time-series",
+      "source": "time series",
+      "zh": "时间序列",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "time series analysis"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "autoregressive-model",
+      "source": "autoregressive model",
+      "zh": "自回归模型",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "autoregressive models",
+        "AR model"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "survival-analysis",
+      "source": "survival analysis",
+      "zh": "生存分析",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "odds-ratio",
+      "source": "odds ratio",
+      "zh": "优势比",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "odds ratios"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "relative-risk",
+      "source": "relative risk",
+      "zh": "相对风险",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "type-i-error",
+      "source": "type I error",
+      "zh": "第一类错误",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "type 1 error"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "type-ii-error",
+      "source": "type II error",
+      "zh": "第二类错误",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "type 2 error"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "statistical-power",
+      "source": "statistical power",
+      "zh": "检验功效",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "power of a test"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "multiple-comparisons",
+      "source": "multiple comparisons",
+      "zh": "多重比较",
+      "domains": [
+        "statistics"
+      ],
+      "aliases": [
+        "multiple comparison"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "impedance",
+      "source": "impedance",
+      "zh": "阻抗",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "impedances"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "voltage",
+      "source": "voltage",
+      "zh": "电压",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "voltages"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "electric-current",
+      "source": "electric current",
+      "zh": "电流",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "current"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "frequency",
+      "source": "frequency",
+      "zh": "频率",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "frequencies"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "signal-to-noise-ratio",
+      "source": "signal-to-noise ratio",
+      "zh": "信噪比",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "SNR"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "oscillator",
+      "source": "oscillator",
+      "zh": "振荡器",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "oscillators"
+      ],
+      "confusions": [],
+      "priority": 100
+    },
+    {
+      "id": "rectifier",
+      "source": "rectifier",
+      "zh": "整流器",
+      "domains": [
+        "electronics"
+      ],
+      "aliases": [
+        "rectifiers"
+      ],
+      "confusions": [],
+      "priority": 100
+    }
+  ]
+}
