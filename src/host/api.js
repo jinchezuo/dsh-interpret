@@ -1,4 +1,5 @@
 import { errorPayload, readBody, readJson, sendJson } from './util.js'
+import { ReaderService, MAX_BYTES as READER_MAX_BYTES, sendReaderFile } from './reader.js'
 
 const PREFIX = '/interpret/api'
 
@@ -18,6 +19,7 @@ export function registerApi(ctx, service) {
     return () => {}
   }
   if (!webServer) return () => {}
+  const reader = new ReaderService(service.dataDir)
 
   const handler = async (req, res) => {
     try {
@@ -43,7 +45,7 @@ export function registerApi(ctx, service) {
           ok: true,
           data: {
             name: 'dsh-interpret',
-            version: '0.4.0',
+            version: '0.5.0',
             client: { registered: Boolean(clientPath), path: clientPath || null, boot: bootEntry },
             phase: state.phase,
             asr: state.asr?.picked ? { id: state.asr.picked.id, preparation: state.asr.picked.preparation } : null,
@@ -183,6 +185,55 @@ export function registerApi(ctx, service) {
         }
         sendJson(res, 200, { ok: true, data: { count: entries.length, entries } })
         return
+      }
+
+
+      if (path === '/reader/files') {
+        if (method === 'GET') {
+          sendJson(res, 200, { ok: true, data: await reader.list() })
+          return
+        }
+        if (method === 'POST') {
+          const raw = await readBody(req, READER_MAX_BYTES)
+          const meta = await reader.save(url.searchParams.get('name') || 'file', raw)
+          sendJson(res, 200, { ok: true, data: meta })
+          return
+        }
+        return methodNotAllowed(res, ['GET', 'POST'])
+      }
+
+      const readerMatch = /^\/reader\/files\/([A-Za-z0-9-]{1,80})(?:\/(raw|html))?$/.exec(path)
+      if (readerMatch) {
+        const id = readerMatch[1]
+        const part = readerMatch[2]
+        if (part === 'raw') {
+          if (method !== 'GET') return methodNotAllowed(res, ['GET'])
+          const meta = await reader.get(id)
+          await sendReaderFile(res, meta, reader.mimeFor(meta))
+          return
+        }
+        if (part === 'html') {
+          if (method !== 'GET') return methodNotAllowed(res, ['GET'])
+          const rendered = await reader.render(id)
+          res.writeHead(200, {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store',
+            'X-Content-Type-Options': 'nosniff',
+            'Content-Security-Policy': "default-src 'none'; img-src data:; style-src 'unsafe-inline'; font-src data:",
+          })
+          res.end(rendered.html)
+          return
+        }
+        if (method === 'GET') {
+          const meta = await reader.get(id)
+          sendJson(res, 200, { ok: true, data: reader.publicMeta(meta) })
+          return
+        }
+        if (method === 'DELETE') {
+          sendJson(res, 200, { ok: true, data: await reader.remove(id) })
+          return
+        }
+        return methodNotAllowed(res, ['GET', 'DELETE'])
       }
 
       if (path === '/sessions') {

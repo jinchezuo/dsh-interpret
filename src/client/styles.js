@@ -88,11 +88,89 @@ const CSS = String.raw`
 .di-badge.error { color: var(--di-danger); }
 .di-badge.dropped { color: var(--di-muted); }
 .di-right-dock {
-  flex: none; width: clamp(300px, 36vw, 420px); min-height: 0; overflow: hidden;
+  flex: none; width: clamp(420px, 44vw, 680px); min-height: 0; overflow: hidden;
   border-left: 1px solid var(--di-border); background: var(--di-panel-bg);
   display: flex; flex-direction: column;
 }
 .di-right-dock .di-dock { width: 100%; height: 100%; }
+.di-reader {
+  display: flex; flex-direction: column; height: 100%; min-height: 0;
+  background: var(--di-panel-bg); color: var(--di-fg);
+}
+.di-reader-head {
+  display: flex; align-items: center; gap: 8px; padding: 9px 10px 7px;
+  border-bottom: 1px solid var(--di-border); flex: none; min-width: 0;
+}
+.di-reader-title { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
+.di-reader-title strong { font-size: 13px; white-space: nowrap; }
+.di-reader-name {
+  font-size: 11px; color: var(--di-muted); overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; max-width: 180px;
+}
+.di-reader-spacer { flex: 1; }
+.di-reader-tools {
+  display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+  border-bottom: 1px solid var(--di-border); flex: none; min-width: 0;
+}
+.di-reader-tools .di-btn { padding: 3px 8px; font-size: 11px; }
+.di-reader-select { width: min(210px, 45%); margin: 0; }
+.di-reader-meta, .di-reader-hint { color: var(--di-muted); font-size: 11px; }
+.di-reader-body {
+  position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column;
+  overflow: hidden; background: var(--di-panel-bg);
+}
+.di-reader-body.dragging { outline: 2px dashed var(--di-accent); outline-offset: -6px; }
+.di-reader-frame { flex: 1; width: 100%; height: 100%; border: 0; background: #fff; display: block; }
+.di-reader-empty {
+  margin: auto; padding: 28px 22px; text-align: center; color: var(--di-muted);
+  display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: 360px;
+}
+.di-reader-empty strong { color: var(--di-fg); font-size: 15px; }
+.di-reader-empty p { margin: 0; font-size: 12px; }
+.di-reader-empty .di-btn { margin-top: 10px; }
+.di-reader-state {
+  margin: auto; display: flex; align-items: center; gap: 9px; padding: 24px;
+  color: var(--di-muted); font-size: 13px; flex-direction: column; text-align: center;
+}
+.di-reader-state.error { color: var(--di-danger); }
+.di-reader-spinner {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--di-border);
+  border-top-color: var(--di-accent); animation: di-spin .8s linear infinite;
+}
+@keyframes di-spin { to { transform: rotate(360deg); } }
+.di-reader-error {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 3;
+  padding: 8px 10px; border: 1px solid rgba(209,67,67,.35); border-radius: 8px;
+  background: rgba(209,67,67,.08); color: var(--di-fg); font-size: 12px;
+}
+.di-reader-markdown {
+  flex: 1; overflow: auto; padding: 14px 16px 30px; font-size: 14px; line-height: 1.7;
+  word-break: break-word;
+}
+.di-reader-markdown h1 { font-size: 21px; margin: 4px 0 14px; }
+.di-reader-markdown h2 { font-size: 17px; margin: 22px 0 9px; border-bottom: 1px solid var(--di-border); padding-bottom: 4px; }
+.di-reader-markdown h3 { font-size: 15px; margin: 16px 0 7px; }
+.di-reader-markdown p { margin: 0 0 10px; }
+.di-reader-markdown ul, .di-reader-markdown ol { margin: 0 0 12px 20px; padding: 0; }
+.di-reader-markdown li { margin: 3px 0; }
+.di-reader-markdown pre {
+  background: var(--di-raised); border: 1px solid var(--di-border); border-radius: 8px;
+  padding: 10px 12px; overflow: auto; font-size: 12px; line-height: 1.55;
+}
+.di-reader-markdown code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92em; }
+.di-reader-markdown blockquote {
+  margin: 0 0 12px; padding: 2px 0 2px 10px; border-left: 3px solid var(--di-border); color: var(--di-muted);
+}
+.di-reader-markdown a { color: var(--di-accent); }
+.di-reader-table-wrap { flex: 1; overflow: auto; padding: 10px 12px 24px; }
+.di-reader-table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.di-reader-table th, .di-reader-table td {
+  border: 1px solid var(--di-border); padding: 5px 7px; text-align: left; vertical-align: top;
+  max-width: 260px; word-break: break-word;
+}
+.di-reader-table th { position: sticky; top: 0; background: var(--di-panel-bg); z-index: 1; }
+.di-reader-markdown .di-reader-table { margin: 4px 0 14px; }
+
 .di-aside {
   flex: none; width: 300px; border-left: 1px solid var(--di-border);
   padding: 12px 14px 20px; overflow: auto; display: flex; flex-direction: column; gap: 14px;

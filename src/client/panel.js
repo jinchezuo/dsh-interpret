@@ -1,7 +1,7 @@
 import { createElement as h, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { InterpretIcon } from './icon.js'
 import { CaptionRow, LiveRow, fmtClock } from './rows.js'
-import { CaptionDock } from './dock.js'
+import { ReaderPane } from './reader.js'
 
 const PHASE_LABEL = {
   idle: '空闲',
@@ -159,8 +159,8 @@ export function PanelView({ controller, openDock, dockAvailable }) {
       h('button', {
         className: 'di-btn ghost' + (dock?.open ? ' active' : ''),
         onClick: () => openDock && openDock(),
-        title: dock?.open ? '收起右侧字幕栏' : '在主面板右侧打开字幕栏',
-      }, dock?.open ? '隐藏右栏' : '右栏显示'),
+        title: dock?.open ? '收起讲义阅读器' : '在主面板右侧打开讲义阅读器',
+      }, dock?.open ? '隐藏讲义' : '讲义'),
       h('button', {
         className: 'di-btn ghost',
         onClick: () => setSettingsOpen((value) => !value),
@@ -188,7 +188,7 @@ export function PanelView({ controller, openDock, dockAvailable }) {
             h('div', { className: 'di-en di-draft-en' }, draft.en)) : null,
           h('div', { style: { height: '1px' } }))),
 
-      dock?.open ? h('aside', { className: 'di-right-dock' }, h(CaptionDock, { controller })) : null,
+      dock?.open ? h('aside', { className: 'di-right-dock' }, h(ReaderPane, { onClose: openDock })) : null,
 
       settingsOpen ? h('aside', { className: 'di-aside' },
         h('section', { className: 'di-card' },
