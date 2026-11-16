@@ -6,3 +6,10 @@ lib/client.js.map
 .cache/
 .test-data*/
 logs/
+*.log
+.env
+.env.*
+dist/
+release/
+coverage/
+*.tgz

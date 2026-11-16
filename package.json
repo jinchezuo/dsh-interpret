@@ -1,7 +1,27 @@
 {
   "name": "dsh-interpret",
   "version": "1.0.0",
-  "description": "DSH 实时英中同传字幕插件：麦克风/系统音频 → 本地 ASR → 术语化翻译 → 双语字幕",
+  "description": "DSH 实时英中同传字幕插件：麦克风/系统音频 → 本地 ASR → 术语化翻译 → 双语字幕，内置讲义阅读器",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/<owner>/dsh-interpret.git"
+  },
+  "homepage": "https://github.com/<owner>/dsh-interpret#readme",
+  "bugs": {
+    "url": "https://github.com/<owner>/dsh-interpret/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "interpretation",
+    "translation",
+    "subtitles",
+    "parakeet",
+    "sherpa-onnx",
+    "handout-reader"
+  ],
+  "author": "dsh-interpret contributors",
+  "packageManager": "pnpm@12.18.0",
   "type": "module",
   "license": "MIT",
   "icon": "./icon.svg",
@@ -35,7 +55,8 @@
     "build": "node scripts/build-client.mjs",
     "dev": "node scripts/build-client.mjs --watch",
     "test": "node --test test/*.test.mjs",
-    "verify-package": "node scripts/verify-package.mjs"
+    "verify-package": "node scripts/verify-package.mjs",
+    "check-docs": "node scripts/check-docs.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.28.2"
@@ -48,6 +69,10 @@
     "icon.svg",
     "README.md",
     "THIRD_PARTY_NOTICES.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CITATION.cff",
     "docs"
   ],
   "dependencies": {

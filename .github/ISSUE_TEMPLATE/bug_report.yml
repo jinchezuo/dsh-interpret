@@ -1,0 +1,34 @@
+name: Bug report
+description: Report a reproducible problem with dsh-interpret
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please include logs from ~/.dsh/interpret/startup.log and avoid posting private transcripts.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: dsh-interpret version and DSH version
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and errors
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Live captions, System audio, Translation, Terminology, History, Handout reader, Installation, Other]

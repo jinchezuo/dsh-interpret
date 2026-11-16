@@ -43,6 +43,12 @@ test('live captions update word by word and are replaced by the final caption', 
   })
   const lives = []
   service.on((type, payload) => { if (type === 'live') lives.push(payload) })
+  await service.asr.parakeet.inspect().catch(() => {})
+  const parakeet = service.asr.parakeet.snapshot()
+  if (parakeet?.phase !== 'ready') {
+    t.skip('Parakeet model is not available in this checkout')
+    return
+  }
   await service.start({ title: 'live-test' })
   if (!service.streamingReady) {
     t.skip('streaming model is not available')
