@@ -22,14 +22,14 @@ pnpm verify-package
 ## 2. 打版本标签
 
 ```bash
-git tag v1.1.1
-git push origin v1.1.1
+git tag v1.1.2
+git push origin v1.1.2
 ```
 
 Release 工作流会并行构建：
 
-- dsh-interpret-1.1.1.tgz（macOS/generic，含 arm64 helper）；
-- dsh-interpret-1.1.1-win32-x64.tgz（含 WASAPI exe）；
+- dsh-interpret-1.1.2.tgz（macOS/generic，含 arm64 helper）；
+- dsh-interpret-1.1.2-win32-x64.tgz（含 WASAPI exe）；
 - SHA256SUMS.txt。
 
 然后由 publish job 创建 GitHub Release。
@@ -55,4 +55,4 @@ Release 工作流会并行构建：
 
 - 旧版本标签和 Release 保留；
 - 用户可重新安装 v1.0.0 的 macOS 包；
-- Windows 首个版本为 v1.1.0；v1.1.1 修复阅读器 Python 依赖。
+- Windows 首个版本为 v1.1.0；v1.1.2 修复阅读器 Python 依赖。

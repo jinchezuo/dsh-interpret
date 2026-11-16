@@ -7,7 +7,7 @@ import { ReaderService } from '../src/host/reader.js'
 
 const FIXTURES = new URL('./fixtures/reader/', import.meta.url)
 
-test('Office handouts render with plugin-local Python dependencies', async (t) => {
+test('Office handouts render with the Python standard library', async (t) => {
   if (process.platform !== 'darwin' && process.platform !== 'win32') {
     t.skip('reader Python assets are verified on macOS and Windows')
     return

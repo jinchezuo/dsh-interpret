@@ -1,7 +1,7 @@
 import { execFile } from 'node:child_process'
-import { createReadStream, existsSync } from 'node:fs'
+import { createReadStream } from 'node:fs'
 import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
-import { basename, delimiter, extname, join, resolve, sep } from 'node:path'
+import { basename, extname, join, resolve, sep } from 'node:path'
 import { homedir } from 'node:os'
 import { randomUUID } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
@@ -9,12 +9,7 @@ import { promisify } from 'node:util'
 import WordExtractor from 'word-extractor'
 
 const execFileAsync = promisify(execFile)
-const PACKAGE_ROOT = fileURLToPath(new URL('../../', import.meta.url))
 const RENDER_SCRIPT = fileURLToPath(new URL('./readers/render.py', import.meta.url))
-const PYTHON_SITE = join(PACKAGE_ROOT, 'assets', 'python', 'site-packages')
-const PYTHON_PLATFORM_SITE = process.platform === 'win32'
-  ? join(PACKAGE_ROOT, 'assets', 'python', 'win32-x64', 'site-packages')
-  : null
 const DOC_FALLBACK_CSS = 'body{margin:0;padding:20px 22px 40px;background:#fff;color:#1f2328;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}pre{white-space:pre-wrap;word-break:break-word;background:#f6f8fa;border:1px solid #e5e7eb;border-radius:8px;padding:12px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}.meta{color:#6b7280;font-size:12px;margin-bottom:18px}@media(prefers-color-scheme:dark){body{background:#1b1f24;color:#e6e8eb}pre{background:#15191e;border-color:#30363d}}'
 const ALLOWED = new Set(['pdf', 'doc', 'docx', 'xlsx', 'csv', 'md', 'pptx'])
 const OFFICE = new Set(['doc', 'docx', 'xlsx', 'pptx'])
@@ -125,23 +120,10 @@ export class ReaderService {
     return { meta, buffer: await readFile(meta.sourcePath) }
   }
 
-  pythonSitePaths() {
-    return [PYTHON_PLATFORM_SITE, PYTHON_SITE].filter((value) => value && existsSync(value))
-  }
-
-  pythonEnv() {
-    const current = String(process.env.PYTHONPATH || '').trim()
-    const paths = [...this.pythonSitePaths(), current].filter(Boolean)
-    return {
-      ...process.env,
-      ...(paths.length ? { PYTHONPATH: paths.join(delimiter) } : {}),
-    }
-  }
-
   async renderWithPython(meta, cache) {
     const python = await this.findPython(meta.ext)
     const args = [RENDER_SCRIPT, '--input', meta.sourcePath, '--out', meta.dir, '--ext', meta.ext]
-    await execFileAsync(python, args, { timeout: 90_000, maxBuffer: 8 * 1024 * 1024, env: this.pythonEnv() })
+    await execFileAsync(python, args, { timeout: 90_000, maxBuffer: 8 * 1024 * 1024 })
     return { meta, html: await readFile(cache, 'utf8') }
   }
 
@@ -181,7 +163,7 @@ export class ReaderService {
   }
 
   async findPython(ext) {
-    if (this.python && this.pythonDeps) return this.python
+    if (this.python) return this.python
     const home = String(process.env.DSH_HOME || '').trim() || join(process.env.USERPROFILE || process.env.HOME || homedir(), '.dsh')
     const bundled = []
     try {
@@ -206,24 +188,14 @@ export class ReaderService {
       '/opt/homebrew/bin/python3',
       '/usr/bin/python3',
     ].filter(Boolean)
-    const env = this.pythonEnv()
-    let fallback = null
     for (const candidate of candidates) {
       try {
-        await execFileAsync(candidate, ['-c', 'import sys; print(sys.version_info[0])'], { timeout: 5000, env })
-        if (!fallback) fallback = candidate
-        await execFileAsync(candidate, ['-c', 'import docx, openpyxl, lxml.etree'], { timeout: 10000, env })
+        await execFileAsync(candidate, ['-c', 'import sys; print(sys.version_info[0])'], { timeout: 5000 })
         this.python = candidate
-        this.pythonDeps = true
         return candidate
       } catch {}
     }
-    if (ext === 'doc' || ext === 'pptx') {
-      if (fallback) return fallback
-      throw fail('找不到 Python 3，无法解析 Office 文档', 'PYTHON_NOT_FOUND', 500)
-    }
-    const localHint = this.pythonSitePaths().length ? '' : '；插件内置 Python 依赖缺失'
-    throw fail('DSH 自带 Python 和系统 Python 都无法导入 docx/openpyxl/lxml' + localHint, 'PYTHON_DEPS_MISSING', 500)
+    throw fail('找不到可用的 Python 解释器，无法解析 Office 文档', 'PYTHON_NOT_FOUND', 500)
   }
 
   mimeFor(meta) {

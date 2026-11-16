@@ -29,7 +29,7 @@ dsh-interpret 是一个单插件自包含的 DSH 插件，由 host 半和 client
 | Silero VAD 模型 | assets/models/silero_vad.onnx |
 | Parakeet | 首次下载到 dataDir/models |
 | 流式模型 | 首次下载到 dataDir/models |
-| Office 解析 | DSH 自带 Python + 插件内置 python-docx/openpyxl/et_xmlfile；Windows 另带 lxml；.doc 走平台转换或 word-extractor |
+| Office 解析 | DSH 自带 Python 标准库（zipfile + ElementTree）；.doc 走平台转换或 word-extractor |
 | PDF | Chromium 内置阅读器 |
 | 翻译 | DSH llm 路由 |
 

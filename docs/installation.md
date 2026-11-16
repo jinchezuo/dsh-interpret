@@ -25,7 +25,7 @@ dsh plugin --profile desktop add file:$(pwd)
 ### 从 Release
 
 ```bash
-dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.1.tgz
+dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.2.tgz
 ```
 
 内置 arm64 ScreenCaptureKit helper，首次系统音频使用需要授予「屏幕录制 / 系统音频」权限。
@@ -35,7 +35,7 @@ dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.1.tgz
 Windows 必须使用带 WASAPI helper 的 win32-x64 包：
 
 ```powershell
-dsh plugin --profile desktop add C:\path\to\dsh-interpret-1.1.1-win32-x64.tgz
+dsh plugin --profile desktop add C:\path\to\dsh-interpret-1.1.2-win32-x64.tgz
 ```
 
 不要使用通用 tarball 或源码目录直接安装；通用包不含 Windows exe，系统音频不可用。

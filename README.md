@@ -18,7 +18,7 @@ DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解
 
 - **系统音频采集 helper**：macOS 使用来自 Apache-2.0 的 @huliux/dsh-asr-plugin，已随插件分发在 assets/system-audio；Windows 使用内置的 WASAPI helper（C#/NAudio，MIT），随 win32-x64 包分发；
 - **Silero VAD 模型**：已内置在 assets/models，不需要单独下载；
-- **讲义解析**：使用 DSH 自带 Python 解释器 + 插件内置的 python-docx、openpyxl、et_xmlfile；Windows 还内置 lxml。不需要用户安装 Python，也不需要 pip install；
+- **讲义解析**：使用 DSH 自带 Python 的标准库解析 DOCX/XLSX/PPTX，不需要 python-docx、openpyxl、lxml，也不需要系统 Python、pip 或联网安装；
 - **本地 ASR**：Parakeet 由插件进程内运行；sherpa-onnx-node 由插件安装时自动安装，它不是 DSH 插件。
 
 ### 仍需的平台前提
@@ -94,10 +94,10 @@ powershell -ExecutionPolicy Bypass -File scripts/build-win-audio.ps1
 
 ### 方式 B：从 Release tarball 安装
 
-macOS 下载 dsh-interpret-1.1.1.tgz；Windows x64 必须下载 dsh-interpret-1.1.1-win32-x64.tgz（内含 WASAPI helper）：
+macOS 下载 dsh-interpret-1.1.2.tgz；Windows x64 必须下载 dsh-interpret-1.1.2-win32-x64.tgz（内含 WASAPI helper）：
 
 ```bash
-dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.1-win32-x64.tgz
+dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.2-win32-x64.tgz
 ```
 
 DSH 的插件命令会把 npm 依赖（包括 sherpa-onnx-node）一起安装。Windows 源码安装需要先运行：

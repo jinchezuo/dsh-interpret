@@ -31,20 +31,11 @@ The Apache-2.0 license text is included at assets/system-audio/LICENSE. Upstream
 Model weights other than the small Silero VAD file are not committed to this
 repository or packaged into the npm bundle.
 
-## Handout reader Python packages
+## Handout reader
 
-The handout reader runs the Python interpreter bundled with DSH and prepends
-plugin-local packages from assets/python. No system Python or pip is used.
-
-- python-docx 1.2.0 — MIT
-- openpyxl 3.1.5 — MIT
-- et_xmlfile 2.0.0 — MIT
-- typing_extensions 4.16.0 — PSF-2.0
-- lxml 6.1.3 (Windows x64 only) — BSD-3-Clause
-
-License files are retained in each package's .dist-info directory. macOS uses
-the signed lxml already bundled with DSH because the hardened Python runtime
-rejects third-party ad-hoc-signed extensions.
+The handout reader uses only the Python standard library bundled with DSH for
+DOCX, XLSX and PPTX. It does not require or bundle python-docx, openpyxl, lxml
+or any other third-party Python package.
 
 ## Legacy .doc extraction
 
@@ -65,10 +56,11 @@ installed as npm dependencies and are Apache-2.0 licensed.
 
 ## Document rendering
 
-The handout reader uses the Python runtime bundled with DeepSeek Harness
-(python-docx, openpyxl, python-pptx, Pillow). Those packages retain their
-upstream licenses. .doc conversion on macOS uses the system textutil command;
-on Windows it uses Microsoft Word COM, LibreOffice, or antiword when available.
+The handout reader uses only the Python standard library bundled with
+DeepSeek Harness (zipfile and ElementTree) for DOCX, XLSX and PPTX. It does
+not bundle python-docx, openpyxl, python-pptx, Pillow or lxml. .doc conversion
+on macOS uses the system textutil command; on Windows it uses Microsoft Word
+COM, LibreOffice, or antiword, with word-extractor as a pure-JS fallback.
 
 ## Terminology data
 

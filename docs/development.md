@@ -20,7 +20,6 @@ pnpm install
 pnpm build
 pnpm test
 pnpm verify-package
-pnpm verify-python
 node scripts/check-docs.mjs
 pnpm pack
 ```
