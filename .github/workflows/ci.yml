@@ -43,5 +43,11 @@ jobs:
       - name: Build Windows WASAPI helper
         shell: pwsh
         run: ./scripts/build-win-audio.ps1
+      - name: Smoke-run Windows helper
+        shell: pwsh
+        run: |
+          $exe = "assets/system-audio/win32-x64/dsh-asr-capture-system.exe"
+          & $exe --help
+          if ($LASTEXITCODE -ne 0) { throw "Windows helper failed to start" }
       - run: node --test test/standalone.test.mjs
       - run: pnpm verify-package

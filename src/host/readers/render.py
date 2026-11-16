@@ -191,7 +191,7 @@ def render_doc(path):
             target = os.path.join(outdir, "word-com.txt")
             script = os.path.join(outdir, "word-com.ps1")
             with open(script, "w", encoding="utf-8") as handle:
-                handle.write('$w=New-Object -ComObject Word.Application; $w.Visible=$false; $d=$w.Documents.Open($args[0],$false,$true); $d.SaveAs([ref]$args[1],[ref]2); $d.Close($false); $w.Quit()')
+                handle.write('$w=New-Object -ComObject Word.Application; $w.Visible=$false; $d=$w.Documents.Open($args[0],$false,$true); $d.SaveAs($args[1], 2); $d.Close($false); $w.Quit()')
             subprocess.run(
                 ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script, path, target],
                 capture_output=True, text=True, timeout=90, check=True,

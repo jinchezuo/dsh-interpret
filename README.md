@@ -16,7 +16,7 @@ DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解
 
 ### 内置组件（插件内置，不需要外部安装）
 
-- **系统音频采集 helper**：来自 Apache-2.0 的 @huliux/dsh-asr-plugin，已随插件分发在 assets/system-audio；
+- **系统音频采集 helper**：macOS 使用来自 Apache-2.0 的 @huliux/dsh-asr-plugin，已随插件分发在 assets/system-audio；Windows 使用内置的 WASAPI helper（C#/NAudio，MIT），随 win32-x64 包分发；
 - **Silero VAD 模型**：已内置在 assets/models，不需要单独下载；
 - **讲义解析**：优先使用 DSH 自带 Python（python-docx、openpyxl、python-pptx），不需要用户 pip install；
 - **本地 ASR**：Parakeet 由插件进程内运行；sherpa-onnx-node 由插件安装时自动安装，它不是 DSH 插件。

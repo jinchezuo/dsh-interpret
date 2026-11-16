@@ -1,6 +1,6 @@
 # Phase 0 实测记录（历史）
 
-> 本文是开发阶段的原始实测，不是当前 1.0.0 的依赖说明。当前版本已内置系统音频 helper 与 Silero VAD，不再要求安装 dsh-asr-plugin；以 README 和 docs/installation.md 为准。
+> 本文是开发阶段的原始实测，不是当前 1.x 的依赖说明。当前版本已内置系统音频 helper 与 Silero VAD，不再要求安装 dsh-asr-plugin；以 README 和 docs/installation.md 为准。
 
 环境：DSH 0.2.2-rc.3，macOS 27.0，Apple M5 / 16GB，Node 26（开发）/ DSH 宿主。
 
