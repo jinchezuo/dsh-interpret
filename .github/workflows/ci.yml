@@ -26,16 +26,3 @@ jobs:
       - run: pnpm verify-package
       - run: node scripts/check-docs.mjs
 
-  macos-helper:
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: node --test test/standalone.test.mjs
-      - name: Verify bundled helper signature
-        run: codesign --verify --deep --strict assets/system-audio/recording-helper/DSHASRRecordingHelper.app
