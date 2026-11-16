@@ -523,9 +523,12 @@ export class InterpretService {
     const controller = new AbortController()
     state.controller = controller
     const hits = this.glossary.match(text)
+    const ragHits = this.terminology.ready && this.config.terminologyMode !== 'off'
+      ? this.terminology.match(text, { domains: this.activeTerminologyDomains })
+      : []
     const options = {
       brief: this.config.brief || '',
-      glossary: this.glossary.prompt(hits),
+      glossary: [this.glossary.prompt(hits), this.terminology.promptBlock(ragHits)].filter(Boolean).join('\n\n'),
       context: this.recentContext(),
       partial: true,
       signal: controller.signal,
@@ -806,7 +809,7 @@ export class InterpretService {
     if (this.config.terminologyMode !== 'off' && this.terminology.ready && this.config.termCorrection && this.mtRoute) {
       const context = this.segments.slice(-4).map((segment) => segment.en).filter(Boolean).join(' ')
       const hits = this.terminologyHits(text, context)
-      if (hits.length) {
+      if (hits.length && this.terminology.needsCorrection(text, hits)) {
         const corrected = await this.termCorrector.correct(text, {
           hits,
           context,
@@ -926,7 +929,11 @@ export class InterpretService {
 
   terminologyHits(text, context = '') {
     if (this.config.terminologyMode === 'off' || !this.terminology.ready) return []
-    const domains = this.activeTerminologyDomains.length ? this.activeTerminologyDomains : this.refreshTerminologyDomains()
+    let domains = this.activeTerminologyDomains
+    if (!domains.length) {
+      domains = this.terminology.domainsFor([context, text].join(' '), ['auto'])
+      this.activeTerminologyDomains = domains
+    }
     return this.terminology.retrieve(text, { context, domains, topK: this.config.terminologyTopK })
   }
 

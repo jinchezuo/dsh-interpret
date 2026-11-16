@@ -206,6 +206,17 @@ export class Terminology {
     return found
   }
 
+  needsCorrection(text, hits = []) {
+    const lower = String(text || '').toLowerCase()
+    for (const term of hits) {
+      for (const confusion of term.confusions || []) {
+        if (confusion && lower.includes(String(confusion).toLowerCase())) return true
+      }
+    }
+    const nonExact = hits.filter((hit) => !hit.reasons?.exact)
+    return (nonExact[0]?.score || 0) >= 14
+  }
+
   correctLive(text, explicitDomains = []) {
     if (!this.ready) return { text: String(text || ''), corrections: [] }
     const active = this.domainsFor(text, explicitDomains)
