@@ -1,0 +1,506 @@
+{
+  "version": 1,
+  "note": "学术场景种子术语；可在插件面板中增删",
+  "terms": [
+    {
+      "source": "algorithm",
+      "target": "算法",
+      "preferred": true
+    },
+    {
+      "source": "hypothesis",
+      "target": "假设",
+      "preferred": true
+    },
+    {
+      "source": "hypotheses",
+      "target": "假设",
+      "preferred": true
+    },
+    {
+      "source": "gradient",
+      "target": "梯度",
+      "preferred": true
+    },
+    {
+      "source": "eigenvalue",
+      "target": "特征值",
+      "preferred": true
+    },
+    {
+      "source": "eigenvector",
+      "target": "特征向量",
+      "preferred": true
+    },
+    {
+      "source": "eigenvalue decomposition",
+      "target": "特征值分解",
+      "preferred": true
+    },
+    {
+      "source": "matrix",
+      "target": "矩阵",
+      "preferred": true
+    },
+    {
+      "source": "symmetric matrix",
+      "target": "对称矩阵",
+      "preferred": true
+    },
+    {
+      "source": "trace",
+      "target": "迹",
+      "preferred": true
+    },
+    {
+      "source": "determinant",
+      "target": "行列式",
+      "preferred": true
+    },
+    {
+      "source": "orthogonal",
+      "target": "正交的",
+      "preferred": true
+    },
+    {
+      "source": "positive definite",
+      "target": "正定的",
+      "preferred": true
+    },
+    {
+      "source": "norm",
+      "target": "范数",
+      "preferred": true
+    },
+    {
+      "source": "inner product",
+      "target": "内积",
+      "preferred": true
+    },
+    {
+      "source": "vector space",
+      "target": "向量空间",
+      "preferred": true
+    },
+    {
+      "source": "linear transformation",
+      "target": "线性变换",
+      "preferred": true
+    },
+    {
+      "source": "basis",
+      "target": "基",
+      "preferred": true
+    },
+    {
+      "source": "manifold",
+      "target": "流形",
+      "preferred": true
+    },
+    {
+      "source": "topology",
+      "target": "拓扑",
+      "preferred": true
+    },
+    {
+      "source": "differential equation",
+      "target": "微分方程",
+      "preferred": true
+    },
+    {
+      "source": "partial derivative",
+      "target": "偏导数",
+      "preferred": true
+    },
+    {
+      "source": "gradient descent",
+      "target": "梯度下降",
+      "preferred": true
+    },
+    {
+      "source": "derivative",
+      "target": "导数",
+      "preferred": true
+    },
+    {
+      "source": "integral",
+      "target": "积分",
+      "preferred": true
+    },
+    {
+      "source": "convergence",
+      "target": "收敛",
+      "preferred": true
+    },
+    {
+      "source": "divergence",
+      "target": "散度",
+      "preferred": true
+    },
+    {
+      "source": "theorem",
+      "target": "定理",
+      "preferred": true
+    },
+    {
+      "source": "lemma",
+      "target": "引理",
+      "preferred": true
+    },
+    {
+      "source": "corollary",
+      "target": "推论",
+      "preferred": true
+    },
+    {
+      "source": "proposition",
+      "target": "命题",
+      "preferred": true
+    },
+    {
+      "source": "proof",
+      "target": "证明",
+      "preferred": true
+    },
+    {
+      "source": "assumption",
+      "target": "假设",
+      "preferred": true
+    },
+    {
+      "source": "approximation",
+      "target": "近似",
+      "preferred": true
+    },
+    {
+      "source": "simulation",
+      "target": "模拟",
+      "preferred": true
+    },
+    {
+      "source": "tensor",
+      "target": "张量",
+      "preferred": true
+    },
+    {
+      "source": "probability",
+      "target": "概率",
+      "preferred": true
+    },
+    {
+      "source": "probability distribution",
+      "target": "概率分布",
+      "preferred": true
+    },
+    {
+      "source": "variance",
+      "target": "方差",
+      "preferred": true
+    },
+    {
+      "source": "covariance",
+      "target": "协方差",
+      "preferred": true
+    },
+    {
+      "source": "estimator",
+      "target": "估计量",
+      "preferred": true
+    },
+    {
+      "source": "regression",
+      "target": "回归",
+      "preferred": true
+    },
+    {
+      "source": "classification",
+      "target": "分类",
+      "preferred": true
+    },
+    {
+      "source": "clustering",
+      "target": "聚类",
+      "preferred": true
+    },
+    {
+      "source": "optimization",
+      "target": "优化",
+      "preferred": true
+    },
+    {
+      "source": "loss function",
+      "target": "损失函数",
+      "preferred": true
+    },
+    {
+      "source": "neural network",
+      "target": "神经网络",
+      "preferred": true
+    },
+    {
+      "source": "dataset",
+      "target": "数据集",
+      "preferred": true
+    },
+    {
+      "source": "benchmark",
+      "target": "基准",
+      "preferred": true
+    },
+    {
+      "source": "baseline",
+      "target": "基线",
+      "preferred": true
+    },
+    {
+      "source": "ablation study",
+      "target": "消融实验",
+      "preferred": true
+    },
+    {
+      "source": "evaluation metric",
+      "target": "评价指标",
+      "preferred": true
+    },
+    {
+      "source": "state of the art",
+      "target": "最先进水平",
+      "preferred": true
+    },
+    {
+      "source": "reproducibility",
+      "target": "可复现性",
+      "preferred": true
+    },
+    {
+      "source": "peer review",
+      "target": "同行评审",
+      "preferred": true
+    },
+    {
+      "source": "correlation",
+      "target": "相关性",
+      "preferred": true
+    },
+    {
+      "source": "causality",
+      "target": "因果性",
+      "preferred": true
+    },
+    {
+      "source": "robustness",
+      "target": "稳健性",
+      "preferred": true
+    },
+    {
+      "source": "methodology",
+      "target": "方法论",
+      "preferred": true
+    },
+    {
+      "source": "literature review",
+      "target": "文献综述",
+      "preferred": true
+    },
+    {
+      "source": "empirical",
+      "target": "实证的",
+      "preferred": true
+    },
+    {
+      "source": "significance",
+      "target": "显著性",
+      "preferred": true
+    },
+    {
+      "source": "confidence interval",
+      "target": "置信区间",
+      "preferred": true
+    },
+    {
+      "source": "statistically significant",
+      "target": "统计显著",
+      "preferred": true
+    },
+    {
+      "source": "sample size",
+      "target": "样本量",
+      "preferred": true
+    },
+    {
+      "source": "randomized controlled trial",
+      "target": "随机对照试验",
+      "preferred": true
+    },
+    {
+      "source": "placebo",
+      "target": "安慰剂",
+      "preferred": true
+    },
+    {
+      "source": "prevalence",
+      "target": "患病率",
+      "preferred": true
+    },
+    {
+      "source": "incidence",
+      "target": "发病率",
+      "preferred": true
+    },
+    {
+      "source": "gene expression",
+      "target": "基因表达",
+      "preferred": true
+    },
+    {
+      "source": "protein",
+      "target": "蛋白质",
+      "preferred": true
+    },
+    {
+      "source": "enzyme",
+      "target": "酶",
+      "preferred": true
+    },
+    {
+      "source": "receptor",
+      "target": "受体",
+      "preferred": true
+    },
+    {
+      "source": "pathway",
+      "target": "通路",
+      "preferred": true
+    },
+    {
+      "source": "Hamiltonian",
+      "target": "哈密顿量",
+      "preferred": true
+    },
+    {
+      "source": "Lagrangian",
+      "target": "拉格朗日量",
+      "preferred": true
+    },
+    {
+      "source": "Hermitian",
+      "target": "厄米的",
+      "preferred": true
+    },
+    {
+      "source": "wave function",
+      "target": "波函数",
+      "preferred": true
+    },
+    {
+      "source": "momentum",
+      "target": "动量",
+      "preferred": true
+    },
+    {
+      "source": "entropy",
+      "target": "熵",
+      "preferred": true
+    },
+    {
+      "source": "enthalpy",
+      "target": "焓",
+      "preferred": true
+    },
+    {
+      "source": "thermodynamics",
+      "target": "热力学",
+      "preferred": true
+    },
+    {
+      "source": "quantum",
+      "target": "量子",
+      "preferred": true
+    },
+    {
+      "source": "photon",
+      "target": "光子",
+      "preferred": true
+    },
+    {
+      "source": "electron",
+      "target": "电子",
+      "preferred": true
+    },
+    {
+      "source": "equilibrium",
+      "target": "均衡",
+      "preferred": true
+    },
+    {
+      "source": "elasticity",
+      "target": "弹性",
+      "preferred": true
+    },
+    {
+      "source": "marginal cost",
+      "target": "边际成本",
+      "preferred": true
+    },
+    {
+      "source": "utility",
+      "target": "效用",
+      "preferred": true
+    },
+    {
+      "source": "inflation",
+      "target": "通货膨胀",
+      "preferred": true
+    },
+    {
+      "source": "interest rate",
+      "target": "利率",
+      "preferred": true
+    },
+    {
+      "source": "supply",
+      "target": "供给",
+      "preferred": true
+    },
+    {
+      "source": "demand",
+      "target": "需求",
+      "preferred": true
+    },
+    {
+      "source": "paradigm",
+      "target": "范式",
+      "preferred": true
+    },
+    {
+      "source": "framework",
+      "target": "框架",
+      "preferred": true
+    },
+    {
+      "source": "annotation",
+      "target": "标注",
+      "preferred": true
+    },
+    {
+      "source": "transformer",
+      "target": "Transformer",
+      "preferred": true
+    },
+    {
+      "source": "language model",
+      "target": "语言模型",
+      "preferred": true
+    },
+    {
+      "source": "fine-tuning",
+      "target": "微调",
+      "preferred": true
+    },
+    {
+      "source": "inference",
+      "target": "推理",
+      "preferred": true
+    }
+  ]
+}

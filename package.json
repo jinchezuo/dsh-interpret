@@ -1,0 +1,55 @@
+{
+  "name": "dsh-interpret",
+  "version": "0.2.0",
+  "description": "DSH 实时英中同传字幕插件：麦克风/系统音频 → 本地 ASR → 术语化翻译 → 双语字幕",
+  "type": "module",
+  "icon": "./icon.svg",
+  "main": "./src/host/index.js",
+  "exports": {
+    ".": "./src/host/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-sidebar-right"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.2-rc.3 <0.3.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": ">=3.18.1 <4.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/build-client.mjs",
+    "dev": "node scripts/build-client.mjs --watch",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "files": [
+    "src",
+    "lib",
+    "assets",
+    "cordis.patch.yml",
+    "icon.svg",
+    "README.md",
+    "THIRD_PARTY_NOTICES.md",
+    "docs"
+  ],
+  "dependencies": {
+    "sherpa-onnx-node": "^1.13.6"
+  }
+}

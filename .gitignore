@@ -1,0 +1,7 @@
+node_modules/
+lib/client.js.map
+.DS_Store
+*.tgz
+.models/
+.test-data*/
+logs/

@@ -1,0 +1,4 @@
+# dsh-interpret bundle patch: 实时英中同传字幕（host + browser halves）
+- insert:
+    - id: dsh-interpret
+      name: dsh-interpret
