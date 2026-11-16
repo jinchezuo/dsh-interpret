@@ -113,11 +113,9 @@ namespace DshInterpretAudioCapture
                 var result = new byte[count * 2];
                 for (var i = 0; i < count; i++)
                 {
-                    float value;
-                    if (format.Encoding == WaveFormatEncoding.IeeeFloat)
-                        value = BitConverter.ToSingle(buffer, i * 4);
-                    else
-                        value = BitConverter.ToInt32(buffer, i * 4) / 2147483648f;
+                    // WASAPI loopback is IEEE float; treating 32-bit data as float
+                    // also covers extensible formats whose Encoding is not IeeeFloat.
+                    float value = BitConverter.ToSingle(buffer, i * 4);
                     if (float.IsNaN(value) || float.IsInfinity(value)) value = 0f;
                     value = Math.Max(-1f, Math.Min(1f, value));
                     var sample = (short)Math.Round(value * 32767f);
