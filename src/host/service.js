@@ -131,6 +131,7 @@ export class InterpretService {
     this.streamingProgress = null
     this.streamingController = null
     this.streamingReady = false
+    this.streamingPreparing = false
     this.live = { mic: null, system: null }
     this.liveTimer = null
     this.liveTranslateState = {
@@ -1202,6 +1203,12 @@ export class InterpretService {
           }),
         })
         this.emit('state', this.describe())
+        if (this.config.streamingMode !== 'off' && !this.streaming.ready && !this.streamingPreparing) {
+          this.streamingPreparing = true
+          this.prepareStreaming()
+            .catch((error) => this.log.warn('streaming prepare failed:', error?.message || error))
+            .finally(() => { this.streamingPreparing = false })
+        }
         return provider
       } catch (error) {
         this.recordError(error)

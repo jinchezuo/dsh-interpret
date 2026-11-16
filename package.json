@@ -1,8 +1,9 @@
 {
   "name": "dsh-interpret",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "DSH 实时英中同传字幕插件：麦克风/系统音频 → 本地 ASR → 术语化翻译 → 双语字幕",
   "type": "module",
+  "license": "MIT",
   "icon": "./icon.svg",
   "main": "./src/host/index.js",
   "exports": {
@@ -33,7 +34,8 @@
   "scripts": {
     "build": "node scripts/build-client.mjs",
     "dev": "node scripts/build-client.mjs --watch",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "verify-package": "node scripts/verify-package.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.28.2"

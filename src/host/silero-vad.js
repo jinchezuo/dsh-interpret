@@ -8,6 +8,7 @@ const PACKAGE_ROOT = fileURLToPath(new URL('../../', import.meta.url))
 /** Find a Silero VAD model in the dev cache or the plugin data directory. */
 export function resolveVadModel(dataDir) {
   const candidates = [
+    join(PACKAGE_ROOT, 'assets', 'models', 'silero_vad.onnx'),
     join(PACKAGE_ROOT, '.models', 'sensevoice', 'silero_vad.onnx'),
     join(PACKAGE_ROOT, '.models', 'vad', 'silero_vad.onnx'),
     join(dataDir, 'models', 'silero_vad.onnx'),

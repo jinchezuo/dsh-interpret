@@ -133,8 +133,16 @@ export class ReaderService {
 
   async findPython(ext) {
     if (this.python && this.pythonDeps) return this.python
+    const home = String(process.env.DSH_HOME || '').trim() || join(process.env.HOME || '', '.dsh')
+    const bundled = []
+    try {
+      for (const name of await readdir(join(home, 'dsh-runtimes'))) {
+        bundled.push(join(home, 'dsh-runtimes', name, 'dependencies', 'python', 'bin', 'python3'))
+      }
+    } catch {}
     const candidates = [
       process.env.DSH_PYTHON,
+      ...bundled,
       'python3',
       '/Library/Frameworks/Python.framework/Versions/3.14/bin/python3',
       '/usr/local/bin/python3',
@@ -156,7 +164,7 @@ export class ReaderService {
       if (fallback) return fallback
       throw fail('找不到 Python 3，无法解析 Office 文档', 'PYTHON_NOT_FOUND', 500)
     }
-    throw fail('Python 3 缺少 python-docx 或 openpyxl，无法解析 Word/Excel', 'PYTHON_DEPS_MISSING', 500)
+    throw fail('DSH 自带 Python 缺少 python-docx/openpyxl，且系统 Python 也不可用', 'PYTHON_DEPS_MISSING', 500)
   }
 
   mimeFor(meta) {

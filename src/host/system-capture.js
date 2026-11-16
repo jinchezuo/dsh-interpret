@@ -8,10 +8,12 @@ import { fileURLToPath } from 'node:url'
 import { decodeWav } from './audio.js'
 
 const HELPER_RELATIVE = 'recording-helper/DSHASRRecordingHelper.app/Contents/Helpers/dsh-asr-capture-system'
+const PACKAGE_ROOT = fileURLToPath(new URL('../../', import.meta.url))
+const LOCAL_HELPER = join(PACKAGE_ROOT, 'assets', 'system-audio', HELPER_RELATIVE)
 
-/** Locate the signed ScreenCaptureKit helper shipped by @huliux/dsh-asr-plugin. */
+/** Locate the bundled ScreenCaptureKit helper, with the old external path as fallback. */
 export function findSystemCaptureHelper() {
-  const candidates = []
+  const candidates = [LOCAL_HELPER]
   const addProfile = (dir) => {
     if (dir) candidates.push(join(dir, 'node_modules', '@huliux', 'dsh-asr-plugin', 'dist', HELPER_RELATIVE))
   }
@@ -64,7 +66,7 @@ export class SystemCapture {
     if (this.started) return { started: true }
     const found = findSystemCaptureHelper()
     if (!found.path) {
-      throw Object.assign(new Error('未找到 dsh-asr-plugin 的系统音频采集助手'), {
+      throw Object.assign(new Error('未找到内置的系统音频采集助手'), {
         code: 'SYSTEM_CAPTURE_UNAVAILABLE',
         candidates: found.candidates,
       })

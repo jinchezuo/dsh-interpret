@@ -7,35 +7,47 @@ DeepSeek Harness 的本地插件：把现场英文讲解（麦克风）或电脑
 - 左侧栏「同传」入口 + 主面板；主面板「讲义」按钮在右侧打开内置文件阅读器，可边看翻译边看 PDF、Word、Excel、PPT、CSV、Markdown 讲义。
 - 主面板提供开始/停止、双语字幕流、流式灰色草稿、音轨与延迟统计、诊断与历史会话。
 - 麦克风采集：浏览器 getUserMedia → 16kHz 单声道 PCM。
-- 系统音频采集：复用已安装 dsh-asr-plugin 的签名采集助手（ScreenCaptureKit），按 1 秒 WAV 分块送入管线。
+- 系统音频采集：插件自带签名的 ScreenCaptureKit 采集助手（来自 Apache-2.0 的 dsh-asr helper），按 1 秒 WAV 分块送入管线；不依赖外部 dsh-asr 插件。
 - 本机 ASR：
   - Parakeet TDT 0.6B v2（英文，int8）：默认学术模式，实测 6.9 秒英文句子约 177–186ms 解码，能正确识别 eigenvalue / Hamiltonian / Hermitian 等术语。
-  - SenseVoice（官方 speechToText provider）：轻量多语种备选，首次约 239MB。
+  - SenseVoice（如果 DSH 提供 speechToText 服务）：可选备选；未安装 dsh-asr 时只显示本地 Parakeet，不影响使用。
 - 英译中：走 DSH 已配置的 LLM 路由（默认优先 flash 模型），流式显示中文草稿，保序串行队列。
 - 学术术语：内置约 100 条用户种子术语 + 约 3,000 条八学科术语 RAG（AI、数学、统计、生物、城市规划、建筑、电子信息、通用科技），含英文释义、UK/US 音标、别名和常见误听；定稿前用混合检索 + LLM 校验纠正短语级误听（如 laboratory model → large language model），并做学科门控，避免生物语境的合法 laboratory model 被误改。
 - 术语工具：主面板可切换自动/指定学科、开关术语校正、搜索术语并查看 UK/US IPA 与中文；导入 CSV/TSV/TMX/JSON。
 - 数据构建：node scripts/build-terminology.mjs（Wikipedia 术语表 + Britfone + CMUdict；构建缓存 .cache/terminology，产物 assets/terminology）。
-- 噪声/非英语过滤：Silero VAD（缺失时自动回退能量 VAD）+ 自适应噪声底 + 麦克风/系统音频回声去重 + 英文字符/中文占比/重复幻听过滤。
+- 噪声/非英语过滤：内置 Silero VAD 模型 + 自适应噪声底 + 麦克风/系统音频回声去重 + 英文字符/中文占比/重复幻听过滤。
 - 会话落盘与历史：JSON/JSONL、历史列表、查看/重命名/删除、按会话导出；英文/中文/双语 SRT、Markdown。
 - 数据默认在 ~/.dsh/interpret；音频只在本机识别，只有识别文本会发给你配置的 DSH 模型路由。
 
-## 安装
+## 安装（单插件，无需 dsh-asr）
 
-插件已经写入 desktop profile（dsh-interpret），但运行中的应用需要重载一次：
+只需要安装 dsh-interpret。系统音频助手、Silero VAD、讲义解析都已内置或使用 DSH 自带运行时，不再需要安装 dsh-asr-plugin，也不需要 pip install。
 
-1. 重启 DeepSeek Harness；或打开 设置 → 插件，在列表里启用/重新启用 dsh-interpret。
-2. 左侧栏出现「同传」图标，点开主面板。
-3. 在「语音识别」卡片确认引擎：
-   - 默认 Parakeet（学术/低延迟）；如果模型未下载，点「准备本机模型」（约 633MB，一次即可）。
-   - 想用官方 SenseVoice：在下拉框切换，再点准备（约 239MB）。
-4. 在「翻译」卡片确认路由（应该自动选中 deepseek-flash 等）；可用「试翻译」验证。
-5. 点右上角「开始同传」，允许麦克风；系统音频会自动尝试用采集助手。
-6. 说完一句英文后，会先出现灰色英文草稿；句尾定稿后英文原句出现，中文译文随后出现。
-7. 主面板「讲义」按钮可在右侧打开文件阅读器，支持 PDF、DOC/DOCX、XLSX、CSV、MD、PPTX；「历史会话」可查看/导出/删除已完成会话。
+1. 安装本插件（GitHub 下载后）：
 
-如果插件页报错或列表里没有它，用插件页的「添加插件」选择本目录 /Users/zuolaptop/Documents/voicy，或执行：
+       cd dsh-interpret
+       pnpm install
+       pnpm run build
+       dsh plugin --profile desktop add file:$(pwd)
 
-    '/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh' plugin --profile desktop add file:/Users/zuolaptop/Documents/voicy
+   DSH 插件管理器会把 sherpa-onnx-node 等 npm 依赖一起安装；它们不是 DSH 插件。
+2. 重启 DeepSeek Harness；或打开 设置 → 插件，启用 dsh-interpret。
+3. 左侧栏出现「同传」图标，点开主面板。
+4. 在「语音识别」卡片点「准备本机模型」：
+   - 默认 Parakeet（约 633MB，一次即可）；
+   - 如果启用了逐词流式，插件会自动继续下载流式模型（约 73MB）；
+   - Silero VAD 已随插件内置，无需下载。
+5. 在「翻译」卡片确认 DSH 的 LLM 路由（deepseek-flash 等）；翻译仍依赖 DSH 的模型服务。
+6. 点右上角「开始同传」，允许麦克风。首次使用系统音频时，macOS 可能要求给内置 helper 授予屏幕录制/系统音频权限，授权一次即可。
+7. 主面板「讲义」按钮在右侧打开文件阅读器，支持 PDF、DOC/DOCX、XLSX、CSV、MD、PPTX。
+
+## 运行前提
+
+- DeepSeek Harness 桌面版；插件本身不能替代 DSH 应用。
+- 翻译需要 DSH 已配置可用的 LLM 路由。
+- 系统音频 helper 当前为 macOS arm64 构建；Intel Mac 需要对应构建或保留旧外部 helper。
+- Parakeet/流式模型首次需要联网下载，默认保存在 ~/.dsh/interpret/models；离线用户可预置模型目录。
+- 讲义 Office 解析使用 DSH 自带 Python（python-docx、openpyxl、python-pptx）；不需要系统 Python。
 
 ## 开发
 
