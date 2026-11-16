@@ -54,7 +54,7 @@
   "scripts": {
     "build": "node scripts/build-client.mjs",
     "dev": "node scripts/build-client.mjs --watch",
-    "test": "node --test test/*.test.mjs",
+    "test": "node scripts/test.mjs",
     "verify-package": "node scripts/verify-package.mjs",
     "build:win-audio": "powershell -ExecutionPolicy Bypass -File scripts/build-win-audio.ps1",
     "check-docs": "node scripts/check-docs.mjs",
