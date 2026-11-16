@@ -8,7 +8,8 @@ const requiredPhrases = [
   '翻译仍依赖 DSH 已配置的 LLM 路由',
   'Parakeet 和流式模型首次需要联网下载（约 700MB）',
   'macOS 使用 arm64 helper，Windows 使用 x64 WASAPI helper',
-  '.doc 在 Windows 需要 Microsoft Word、LibreOffice 或 antiword',
+  '插件内置的 python-docx、openpyxl、et_xmlfile',
+  '不需要系统 Python',
   'PPTX 仍是文字+图片近似阅读',
 ]
 const requiredFiles = [

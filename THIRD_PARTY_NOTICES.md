@@ -31,6 +31,26 @@ The Apache-2.0 license text is included at assets/system-audio/LICENSE. Upstream
 Model weights other than the small Silero VAD file are not committed to this
 repository or packaged into the npm bundle.
 
+## Handout reader Python packages
+
+The handout reader runs the Python interpreter bundled with DSH and prepends
+plugin-local packages from assets/python. No system Python or pip is used.
+
+- python-docx 1.2.0 — MIT
+- openpyxl 3.1.5 — MIT
+- et_xmlfile 2.0.0 — MIT
+- typing_extensions 4.16.0 — PSF-2.0
+- lxml 6.1.3 (Windows x64 only) — BSD-3-Clause
+
+License files are retained in each package's .dist-info directory. macOS uses
+the signed lxml already bundled with DSH because the hardened Python runtime
+rejects third-party ad-hoc-signed extensions.
+
+## Legacy .doc extraction
+
+- word-extractor 1.0.4 — MIT; transitive dependencies saxes (ISC) and yauzl
+  (MIT). Installed as an npm dependency for the optional .doc text fallback.
+
 ## Windows audio helper
 
 - NAudio 2.2.1 — MIT License, Copyright (c) Mark Heath. Used by the Windows

@@ -1,9 +1,9 @@
-# 验收清单（1.1.0）
+# 验收清单（1.1.1）
 
 ## 自动化
 
 - [x] pnpm build
-- [x] pnpm test（28 项；无模型时模型测试跳过）
+- [x] pnpm test（30 项；无模型时模型测试跳过）
 - [x] pnpm verify-package
 - [x] node scripts/check-docs.mjs
 - [x] Windows CI 构建 WASAPI helper
@@ -36,7 +36,7 @@
 - [ ] 系统音频同传（播放视频）
 - [ ] 无屏幕录制权限要求
 - [ ] 讲义 PDF/DOCX/XLSX/CSV/MD/PPTX
-- [ ] .doc：有 Word/LibreOffice/antiword 时成功，无则清晰报错
+- [ ] .doc：有 Office 转换器时成功，无转换器时 word-extractor 兜底成功
 - [ ] 历史/导出/保存并刷新
 - [ ] 页面刷新后恢复
 

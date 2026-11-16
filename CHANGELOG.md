@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.1 — 2026-11-17
+
+### Fixed
+
+- 讲义阅读器不再依赖用户安装 Python 或 pip：随插件分发 python-docx、openpyxl、et_xmlfile 与 Windows lxml。
+- Windows DSH 自带 Python 缺少 Office 包时不再报错。
+- `.doc` 在 Windows 没有 Word/LibreOffice/antiword 时使用 word-extractor 提取正文。
+
 ## 1.1.0 — 2026-11-16
 
 ### Added
