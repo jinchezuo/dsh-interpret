@@ -149,6 +149,37 @@ test('draft recognition emits a cleared draft when final caption arrives', async
 })
 
 
+test('refresh saves the completed session and returns to a blank idle state', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'dsh-interpret-'))
+  const { ctx } = fakeContext({ text: 'The eigenvalue decomposition is possible.', outputs: ['特征值分解是可能的。'] })
+  const service = new InterpretService(ctx, normalizeConfig({
+    dataDir: dir,
+    asrProvider: 'sensevoice-local',
+    liveTranslate: false,
+    systemAudio: 'off',
+    vadMode: 'energy',
+    minSpeechMs: 200,
+    silenceMs: 300,
+    vadThreshold: 0.01,
+  }))
+  await service.start({ title: 'refresh-test' })
+  await assert.rejects(() => service.resetSession(), (error) => error.code === 'RESET_RUNNING')
+  await service.stop()
+  const id = service.sessionId
+  await service.resetSession()
+  assert.equal(service.phase, 'idle')
+  assert.equal(service.sessionId, null)
+  assert.equal(service.segments.length, 0)
+  assert.equal(service.describe().segmentCount, 0)
+  const list = await service.listSessions()
+  assert.ok(list.some((item) => item.id === id), 'finished session should stay in history')
+  assert.equal((await service.getSession(id)).title, 'refresh-test')
+  await assert.rejects(() => service.resetSession(), (error) => error.code === 'RESET_NOT_READY')
+  service.dispose()
+  await new Promise((resolve) => setTimeout(resolve, 150))
+  await rm(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 })
+})
+
 test('session store lists, renames, exports and deletes a completed session', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'dsh-interpret-'))
   const { ctx } = fakeContext({ text: 'The eigenvalue decomposition is possible.', outputs: ['特征值分解是可能的。'] })

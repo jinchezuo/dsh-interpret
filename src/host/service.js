@@ -808,6 +808,53 @@ export class InterpretService {
     return this.describe()
   }
 
+/**
+   * Save the just-finished session and return the service to a blank idle state.
+   * Only a completed session may be reset; listening/stopping are refused so live
+   * captions and final recognition are never interrupted by a refresh click.
+   */
+  async resetSession() {
+    if (this.phase === 'listening' || this.phase === 'stopping') {
+      throw Object.assign(new Error('同传进行中，停止后才能刷新'), { code: 'RESET_RUNNING', status: 409 })
+    }
+    if (this.phase !== 'completed' || !this.sessionId || !this.sessionDir) {
+      throw Object.assign(new Error('当前没有已结束的同传可保存'), { code: 'RESET_NOT_READY', status: 409 })
+    }
+    await this.writeTranscript()
+    this.phase = 'idle'
+    this.sessionId = null
+    this.sessionDir = null
+    this.title = ''
+    this.segments = []
+    this.seq = 0
+    this.stats = this.freshStats()
+    this.lastError = null
+    this.stopReason = null
+    this.startedAt = null
+    this.endedAt = null
+    this.lastAudioAt = null
+    this.tracks = { mic: false, system: false }
+    this.live = { mic: null, system: null }
+    this.liveGeneration += 1
+    this.liveTranslateState = {
+      mic: { at: 0, inflight: false, pendingText: '', controller: null },
+      system: { at: 0, inflight: false, pendingText: '', controller: null },
+    }
+    this.liveRollingAt = { mic: 0, system: 0 }
+    this.liveRollingInFlight = { mic: false, system: false }
+    this.pendingSegments = { mic: null, system: null }
+    this.mergeTimers = { mic: null, system: null }
+    this.segmenters.mic.reset()
+    this.segmenters.system.reset()
+    this.activeTerminologyDomains = []
+    this.draftEpoch += 1
+    this.lastDraft = {}
+    this.queue = Promise.resolve()
+    this.persistQueue = Promise.resolve()
+    this.emit('state', this.describe())
+    return this.describe()
+  }
+
   pushAudio(track, pcmBuffer) {
     if (this.phase !== 'listening') {
       return { accepted: false, reason: 'not-listening' }

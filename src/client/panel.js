@@ -118,6 +118,10 @@ export function PanelView({ controller, openDock, dockAvailable }) {
     ? '语音模型未就绪，请先在右侧准备模型'
     : (autoTranslate && !mt?.provider ? '没有可用的翻译模型路由' : '')
   const canStart = !busy && !running && !stopping && !blockedReason
+  const canSaveAndReset = !busy && state?.phase === 'completed'
+  const refreshTitle = running || stopping
+    ? '同传进行中，停止后才能刷新'
+    : (state?.phase === 'completed' ? '保存本次同传到历史，并清空字幕页' : '本次同传结束后才能刷新')
   const listeningTone = running ? 'live' : (stopping ? 'warn' : '')
   const modelPercent = prepPercent(modelProgress?.preparation || picked?.preparation)
   const elapsedMs = running ? elapsed : (state?.elapsedMs || 0)
@@ -148,10 +152,10 @@ export function PanelView({ controller, openDock, dockAvailable }) {
           }, busy ? '启动中…' : '开始同传'),
       h('button', {
         className: 'di-btn ghost',
-        disabled: busy,
-        onClick: () => controller.refresh(),
-        title: '刷新状态',
-      }, '刷新'),
+        disabled: !canSaveAndReset,
+        onClick: () => controller.resetSession(),
+        title: refreshTitle,
+      }, busy && state?.phase === 'completed' ? '处理中…' : '保存并刷新'),
       h('button', {
         className: 'di-btn ghost' + (dock?.open ? ' active' : ''),
         onClick: () => openDock && openDock(),

@@ -45,6 +45,8 @@ export class Controller {
     this.inFlight = 0
     this.lastReport = 0
     this.disposed = false
+    this.resetting = false
+    this.resetEpoch = 0
   }
 
   subscribe = (listener) => {
@@ -230,10 +232,12 @@ export class Controller {
   }
 
   async refresh() {
-    if (this.refreshing) return
+    if (this.refreshing || this.resetting) return
     this.refreshing = true
+    const epoch = this.resetEpoch
     try {
       const payload = await this.request('/state')
+      if (epoch !== this.resetEpoch) return
       const map = new Map()
       for (const segment of payload.segments || []) map.set(segment.id, segment)
       this.segmentMap = map
@@ -280,6 +284,32 @@ export class Controller {
     } catch (error) {
       this.update({ error: messageOf(error) })
     } finally {
+      this.update({ busy: false })
+    }
+  }
+
+  async resetSession() {
+    if (this.snapshot.busy) return
+    if (this.snapshot.state?.phase !== 'completed') return
+    this.update({ busy: true, error: null })
+    this.resetting = true
+    this.resetEpoch += 1
+    try {
+      const payload = await this.request('/session/reset', { method: 'POST' })
+      this.segmentMap = new Map()
+      this.setState(payload.data, {
+        status: 'ready',
+        segments: [],
+        draft: null,
+        live: {},
+        historyView: null,
+        error: null,
+      })
+      await this.loadSessions()
+    } catch (error) {
+      this.update({ error: messageOf(error) })
+    } finally {
+      this.resetting = false
       this.update({ busy: false })
     }
   }

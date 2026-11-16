@@ -118,6 +118,13 @@ export function registerApi(ctx, service) {
         return
       }
 
+      if (path === '/session/reset') {
+        if (method !== 'POST') return methodNotAllowed(res, ['POST'])
+        const state = await service.resetSession()
+        sendJson(res, 200, { ok: true, data: state })
+        return
+      }
+
       if (path === '/session/start') {
         if (method !== 'POST') return methodNotAllowed(res, ['POST'])
         const body = await readJson(req, 64 * 1024)
