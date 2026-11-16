@@ -119,7 +119,7 @@ export function LiveRow({ item, showZh = true }) {
 
 export function PanelView({ controller, openDock, dockAvailable }) {
   const snapshot = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot)
-  const { state, segments, busy, error, connection, modelProgress, elapsed, testResult, testBusy, audioInfo, draft, live, termSearch, history, historyView, models } = snapshot
+  const { state, segments, busy, error, connection, modelProgress, elapsed, testResult, testBusy, audioInfo, dock, draft, live, termSearch, history, historyView, models } = snapshot
   const listRef = useRef(null)
   const stickRef = useRef(true)
   const [showDropped, setShowDropped] = useState(false)
@@ -222,11 +222,12 @@ export function PanelView({ controller, openDock, dockAvailable }) {
         onClick: () => controller.refresh(),
         title: '刷新状态',
       }, '刷新'),
-      dockAvailable ? h('button', {
+      h('button', {
         className: 'di-btn ghost',
+        disabled: !dock?.available,
         onClick: () => openDock && openDock(),
-        title: '在右侧栏打开实时字幕',
-      }, '右栏显示') : null,
+        title: dock?.available ? '在右侧栏打开实时字幕' : (dock?.reason || '右侧栏不可用'),
+      }, dock?.available ? '右栏显示' : (String(dock?.reason || '').includes('加载') ? '右栏加载中…' : '右栏不可用')),
       h('button', {
         className: 'di-btn ghost',
         onClick: () => setSettingsOpen((value) => !value),

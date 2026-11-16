@@ -12,6 +12,7 @@ const EMPTY = {
   testBusy: false,
   testResult: null,
   audioInfo: null,
+  dock: { available: false, registered: false, reason: '右侧栏加载中…', mounted: false, expanded: false },
   draft: null,
   live: {},
   termSearch: { query: '', results: [], busy: false },
@@ -85,6 +86,10 @@ export class Controller {
 
   setLevel(level) {
     this.update({ level })
+  }
+
+  setDock(patch) {
+    this.update({ dock: { ...(this.snapshot.dock || {}), ...patch } })
   }
 
   report(type, extra = {}) {
