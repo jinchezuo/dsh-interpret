@@ -18,7 +18,7 @@ DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解
 
 - **系统音频采集 helper**：macOS 使用来自 Apache-2.0 的 @huliux/dsh-asr-plugin，已随插件分发在 assets/system-audio；Windows 使用内置的 WASAPI helper（C#/NAudio，MIT），随 win32-x64 包分发；
 - **Silero VAD 模型**：已内置在 assets/models，不需要单独下载；
-- **讲义解析**：优先使用 DSH 自带 Python（python-docx、openpyxl、python-pptx），不需要用户 pip install；
+- **讲义解析**：使用 DSH 自带 Python 解释器 + 插件内置的 python-docx、openpyxl、et_xmlfile；Windows 还内置 lxml。不需要用户安装 Python，也不需要 pip install；
 - **本地 ASR**：Parakeet 由插件进程内运行；sherpa-onnx-node 由插件安装时自动安装，它不是 DSH 插件。
 
 ### 仍需的平台前提
@@ -27,8 +27,9 @@ DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解
 2. **翻译仍依赖 DSH 已配置的 LLM 路由**，无法把翻译大模型打进插件。
 3. **Parakeet 和流式模型首次需要联网下载（约 700MB）**。
 4. **macOS 使用 arm64 helper，Windows 使用 x64 WASAPI helper**；macOS 首次从插件内新路径运行可能需要在系统设置里重新授予一次「屏幕录制 / 系统音频」权限。
-5. **.doc 在 Windows 需要 Microsoft Word、LibreOffice 或 antiword**；DOCX/XLSX/PPTX 不需要这些额外软件。
+5. **.doc 在 Windows 优先用 Word/LibreOffice/antiword，失败时由内置 word-extractor 提取正文**；没有 Office 也能打开，但只有纯文本。
 6. **PPTX 仍是文字+图片近似阅读，不保证像素级版式**。
+7. **不需要系统 Python**；使用 DSH 自带 Python 解释器和插件内置包。
 
 ---
 
@@ -93,10 +94,10 @@ powershell -ExecutionPolicy Bypass -File scripts/build-win-audio.ps1
 
 ### 方式 B：从 Release tarball 安装
 
-macOS 下载 dsh-interpret-1.1.0.tgz；Windows x64 必须下载 dsh-interpret-1.1.0-win32-x64.tgz（内含 WASAPI helper）：
+macOS 下载 dsh-interpret-1.1.1.tgz；Windows x64 必须下载 dsh-interpret-1.1.1-win32-x64.tgz（内含 WASAPI helper）：
 
 ```bash
-dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.0-win32-x64.tgz
+dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.1-win32-x64.tgz
 ```
 
 DSH 的插件命令会把 npm 依赖（包括 sherpa-onnx-node）一起安装。Windows 源码安装需要先运行：
@@ -196,7 +197,7 @@ pnpm pack
 - 系统音频无声音：macOS 检查屏幕录制/系统音频权限；Windows 检查默认播放设备和音频服务；
 - 翻译为空：检查 DSH 的 LLM 路由与「试翻译」；
 - PDF 空白：用「新标签」打开，或检查文件是否损坏；
-- Office 解析失败：确认 DSH 自带 Python 可用；Windows 的 .doc 还需要 Word、LibreOffice 或 antiword；同传本身不受影响。
+- Office 解析失败：插件已内置 Python 包；若仍失败，检查 DSH 的 Python 运行时是否完整；.doc 会优先走 Office 转换，失败再走纯 JS 兜底。
 
 详见 [故障排查](docs/troubleshooting.md)。
 

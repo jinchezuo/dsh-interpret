@@ -11,6 +11,10 @@ const required = [
   'src/host/readers/render.py',
   'LICENSE',
   'THIRD_PARTY_NOTICES.md',
+  'assets/python/MANIFEST.json',
+  'assets/python/site-packages/docx/__init__.py',
+  'assets/python/site-packages/openpyxl/__init__.py',
+  'assets/python/site-packages/et_xmlfile/__init__.py',
 ]
 if (process.platform === 'win32') required.push('assets/system-audio/win32-x64/dsh-asr-capture-system.exe')
 const pkg = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
@@ -18,7 +22,7 @@ const problems = []
 for (const path of required) {
   try { await access(join(root, path)) } catch { problems.push('missing: ' + path) }
 }
-if (pkg.version !== '1.1.0') problems.push('version must be 1.1.0')
+if (pkg.version !== '1.1.1') problems.push('version must be 1.1.1')
 if (pkg.license !== 'MIT') problems.push('license must be MIT')
 const deps = Object.keys(pkg.dependencies || {})
 if (deps.some((name) => name.startsWith('@huliux/') || name.includes('dsh-asr'))) {

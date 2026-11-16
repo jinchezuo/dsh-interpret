@@ -7,6 +7,7 @@
 - Node.js 20+、pnpm（从源码安装时）；
 - 已配置可用的 DSH LLM 路由；
 - 首次准备模型需要联网；
+- 不需要安装系统 Python；使用 DSH 自带 Python 解释器，Office 依赖随插件分发；
 - Windows 源码构建需要 .NET 8 SDK。
 
 ## macOS 安装
@@ -24,7 +25,7 @@ dsh plugin --profile desktop add file:$(pwd)
 ### 从 Release
 
 ```bash
-dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.0.tgz
+dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.1.tgz
 ```
 
 内置 arm64 ScreenCaptureKit helper，首次系统音频使用需要授予「屏幕录制 / 系统音频」权限。
@@ -34,7 +35,7 @@ dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.0.tgz
 Windows 必须使用带 WASAPI helper 的 win32-x64 包：
 
 ```powershell
-dsh plugin --profile desktop add C:\path\to\dsh-interpret-1.1.0-win32-x64.tgz
+dsh plugin --profile desktop add C:\path\to\dsh-interpret-1.1.1-win32-x64.tgz
 ```
 
 不要使用通用 tarball 或源码目录直接安装；通用包不含 Windows exe，系统音频不可用。

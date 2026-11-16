@@ -39,8 +39,9 @@
 
 - 确认 DSH 自带 Python 存在（~/.dsh/dsh-runtimes/*/dependencies/python，Windows 为 python.exe）；
 - 检查 ~/.dsh/interpret 是否有读取权限；
-- DOCX/XLSX 依赖 python-docx/openpyxl；PPTX 可用标准库；
-- Windows 的 .doc 还需要 Microsoft Word、LibreOffice 或 antiword；
+- 插件已内置 python-docx、openpyxl、et_xmlfile；Windows 还内置 lxml；
+- PPTX 只用 Python 标准库；
+- .doc 优先 Word/LibreOffice/antiword，失败时自动用 word-extractor 提取正文；
 - 同传字幕不受讲义解析失败影响。
 
 ## 刷新无效果

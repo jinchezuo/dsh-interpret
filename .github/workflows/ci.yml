@@ -35,6 +35,9 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
@@ -50,4 +53,6 @@ jobs:
           & $exe --help
           if ($LASTEXITCODE -ne 0) { throw "Windows helper failed to start" }
       - run: node --test test/standalone.test.mjs
+      - run: pnpm test
+      - run: pnpm verify-python
       - run: pnpm verify-package

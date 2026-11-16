@@ -20,6 +20,7 @@ pnpm install
 pnpm build
 pnpm test
 pnpm verify-package
+pnpm verify-python
 node scripts/check-docs.mjs
 pnpm pack
 ```
@@ -56,6 +57,7 @@ pnpm dev
 ## 测试
 
 - service/live/streaming/terminology/term-e2e/text/audio/reader/standalone/platform；
+- reader-render：DOCX/XLSX/PPTX 与 .doc 兜底，macOS/Windows 需要 Python 3.12；
 - 测试不依赖真实麦克风；
 - 无 .models 时模型测试自动跳过；
 - 干净环境可用临时 profile 安装 tarball 验证。

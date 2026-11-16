@@ -1,14 +1,21 @@
 import { execFile } from 'node:child_process'
-import { createReadStream } from 'node:fs'
+import { createReadStream, existsSync } from 'node:fs'
 import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
-import { basename, extname, join, resolve, sep } from 'node:path'
+import { basename, delimiter, extname, join, resolve, sep } from 'node:path'
 import { homedir } from 'node:os'
 import { randomUUID } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
+import WordExtractor from 'word-extractor'
 
 const execFileAsync = promisify(execFile)
+const PACKAGE_ROOT = fileURLToPath(new URL('../../', import.meta.url))
 const RENDER_SCRIPT = fileURLToPath(new URL('./readers/render.py', import.meta.url))
+const PYTHON_SITE = join(PACKAGE_ROOT, 'assets', 'python', 'site-packages')
+const PYTHON_PLATFORM_SITE = process.platform === 'win32'
+  ? join(PACKAGE_ROOT, 'assets', 'python', 'win32-x64', 'site-packages')
+  : null
+const DOC_FALLBACK_CSS = 'body{margin:0;padding:20px 22px 40px;background:#fff;color:#1f2328;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}pre{white-space:pre-wrap;word-break:break-word;background:#f6f8fa;border:1px solid #e5e7eb;border-radius:8px;padding:12px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}.meta{color:#6b7280;font-size:12px;margin-bottom:18px}@media(prefers-color-scheme:dark){body{background:#1b1f24;color:#e6e8eb}pre{background:#15191e;border-color:#30363d}}'
 const ALLOWED = new Set(['pdf', 'doc', 'docx', 'xlsx', 'csv', 'md', 'pptx'])
 const OFFICE = new Set(['doc', 'docx', 'xlsx', 'pptx'])
 const MIME = {
@@ -39,6 +46,10 @@ function safeName(raw) {
 
 function extOf(name) {
   return extname(String(name || '')).slice(1).toLowerCase()
+}
+
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char])
 }
 
 /** Local uploaded handouts for the in-panel reader. No arbitrary paths are read. */
@@ -114,6 +125,39 @@ export class ReaderService {
     return { meta, buffer: await readFile(meta.sourcePath) }
   }
 
+  pythonSitePaths() {
+    return [PYTHON_PLATFORM_SITE, PYTHON_SITE].filter((value) => value && existsSync(value))
+  }
+
+  pythonEnv() {
+    const current = String(process.env.PYTHONPATH || '').trim()
+    const paths = [...this.pythonSitePaths(), current].filter(Boolean)
+    return {
+      ...process.env,
+      ...(paths.length ? { PYTHONPATH: paths.join(delimiter) } : {}),
+    }
+  }
+
+  async renderWithPython(meta, cache) {
+    const python = await this.findPython(meta.ext)
+    const args = [RENDER_SCRIPT, '--input', meta.sourcePath, '--out', meta.dir, '--ext', meta.ext]
+    await execFileAsync(python, args, { timeout: 90_000, maxBuffer: 8 * 1024 * 1024, env: this.pythonEnv() })
+    return { meta, html: await readFile(cache, 'utf8') }
+  }
+
+  async renderDocFallback(meta, cache) {
+    const extractor = new WordExtractor()
+    const document = await extractor.extract(meta.sourcePath)
+    const text = String(document.getBody() || '').trim()
+    if (!text) throw new Error('文档没有可提取的文字')
+    const html = '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+      '<style>' + DOC_FALLBACK_CSS + '</style></head><body>' +
+      '<div class="meta">本地讲义阅读器</div><pre>' + escapeHtml(text) + '</pre></body></html>'
+    await writeFile(cache, html)
+    return { meta, html }
+  }
+
   async render(id) {
     const meta = await this.get(id)
     if (!OFFICE.has(meta.ext)) throw fail('该格式不需要 HTML 渲染', 'NOT_RENDERABLE', 415)
@@ -121,13 +165,17 @@ export class ReaderService {
     try {
       return { meta, html: await readFile(cache, 'utf8') }
     } catch {}
-    const python = await this.findPython(meta.ext)
-    const args = [RENDER_SCRIPT, '--input', meta.sourcePath, '--out', meta.dir, '--ext', meta.ext]
     try {
-      await execFileAsync(python, args, { timeout: 90_000, maxBuffer: 8 * 1024 * 1024 })
-      return { meta, html: await readFile(cache, 'utf8') }
+      return await this.renderWithPython(meta, cache)
     } catch (error) {
       const detail = String(error?.stderr || error?.message || error).trim().slice(0, 1200)
+      if (meta.ext === 'doc') {
+        try {
+          return await this.renderDocFallback(meta, cache)
+        } catch (fallbackError) {
+          throw fail('文档解析失败：' + detail + '；DOC 兜底也失败：' + String(fallbackError?.message || fallbackError), 'RENDER_FAILED', 422)
+        }
+      }
       throw fail('文档解析失败：' + detail, 'RENDER_FAILED', 422)
     }
   }
@@ -158,12 +206,13 @@ export class ReaderService {
       '/opt/homebrew/bin/python3',
       '/usr/bin/python3',
     ].filter(Boolean)
+    const env = this.pythonEnv()
     let fallback = null
     for (const candidate of candidates) {
       try {
-        await execFileAsync(candidate, ['-c', 'import sys; print(sys.version_info[0])'], { timeout: 5000 })
+        await execFileAsync(candidate, ['-c', 'import sys; print(sys.version_info[0])'], { timeout: 5000, env })
         if (!fallback) fallback = candidate
-        await execFileAsync(candidate, ['-c', 'import docx, openpyxl'], { timeout: 10000 })
+        await execFileAsync(candidate, ['-c', 'import docx, openpyxl, lxml.etree'], { timeout: 10000, env })
         this.python = candidate
         this.pythonDeps = true
         return candidate
@@ -173,7 +222,8 @@ export class ReaderService {
       if (fallback) return fallback
       throw fail('找不到 Python 3，无法解析 Office 文档', 'PYTHON_NOT_FOUND', 500)
     }
-    throw fail('DSH 自带 Python 缺少 python-docx/openpyxl，且系统 Python 也不可用', 'PYTHON_DEPS_MISSING', 500)
+    const localHint = this.pythonSitePaths().length ? '' : '；插件内置 Python 依赖缺失'
+    throw fail('DSH 自带 Python 和系统 Python 都无法导入 docx/openpyxl/lxml' + localHint, 'PYTHON_DEPS_MISSING', 500)
   }
 
   mimeFor(meta) {

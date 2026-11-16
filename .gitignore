@@ -14,5 +14,7 @@ build/
 release/
 src/win-audio/bin/
 src/win-audio/obj/
+__pycache__/
+*.pyc
 coverage/
 *.tgz
