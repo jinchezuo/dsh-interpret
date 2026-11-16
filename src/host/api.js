@@ -33,13 +33,18 @@ export function registerApi(ctx, service) {
         try { clientModules = ctx.get('clientModules') } catch {}
         let clientPath
         try { clientPath = clientModules?.clientPath?.('dsh-interpret') } catch {}
+        let bootEntry = null
+        try {
+          const graph = clientModules?.graph?.()
+          bootEntry = graph?.entries?.find((entry) => entry.id === 'dsh-interpret') || null
+        } catch {}
         const state = service.describe()
         sendJson(res, 200, {
           ok: true,
           data: {
             name: 'dsh-interpret',
             version: '0.1.0',
-            client: { registered: Boolean(clientPath), path: clientPath || null },
+            client: { registered: Boolean(clientPath), path: clientPath || null, boot: bootEntry },
             phase: state.phase,
             asr: state.asr?.picked ? { id: state.asr.picked.id, preparation: state.asr.picked.preparation } : null,
             mt: state.mt || null,

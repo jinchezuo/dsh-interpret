@@ -10,28 +10,44 @@ export const inject = ['slots']
 const DOCK_ID = 'dsh-interpret/captions'
 const DOCK_KIND = 'interpret-captions'
 
-/** Browser half: sidebar entry, main panel, right-dock captions, live controller. */
+/** Browser half: sidebar entry, main panel, optional right-dock captions, live controller. */
 export function apply(ctx) {
   ensureStyles()
   const controller = new Controller()
   controller.connect()
-  const Panel = () => h(PanelView, { controller, openDock, dockAvailable })
   let dockAvailable = false
+  let sidebarRight = null
   let failure = null
+
+  const reportClient = () => {
+    fetch('/interpret/api/client-ready', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        dockAvailable,
+        failure,
+        hasSidebarRight: Boolean(sidebarRight),
+      }),
+    }).catch(() => {})
+  }
 
   const openDock = () => {
     try {
-      if (!dockAvailable) throw new Error('当前 DSH 未提供右侧栏标签页')
-      ctx.sidebarRight.openTab(DOCK_KIND)
+      if (!sidebarRight) throw new Error('当前 DSH 未提供右侧栏')
+      sidebarRight.openTab(DOCK_KIND)
     } catch (error) {
       controller.update({ error: '右栏字幕打开失败：' + String(error?.message || error) })
     }
   }
 
-  try {
-    const tabs = ctx.sidebarRightTabs
-    if (tabs && typeof tabs.register === 'function') {
-      ctx.effect(() => tabs.register({
+  const Panel = () => h(PanelView, { controller, openDock, dockAvailable })
+
+  // The right Sidebar is an optional service: wait for it instead of reading
+  // ctx.sidebarRight directly (Cordis forbids that without an inject edge).
+  ctx.inject(['sidebarRight', 'sidebarRightTabs'], (scope) => {
+    sidebarRight = scope.sidebarRight
+    try {
+      scope.effect(() => scope.sidebarRightTabs.register({
         id: DOCK_ID,
         kind: DOCK_KIND,
         priority: 'extension',
@@ -44,16 +60,18 @@ export function apply(ctx) {
           description: () => '实时英中双语字幕',
         }],
       }), 'dsh-interpret: dock type')
-      ctx.slots.inject('sidebar.right.pane.tab', () => ctx.slots.register({
+      scope.slots.inject('sidebar.right.pane.tab', () => scope.slots.register({
         name: 'sidebar.right.pane.tab',
         key: DOCK_ID,
       }, () => h(CaptionDock, { controller })))
       dockAvailable = true
+      failure = null
+    } catch (error) {
+      failure = String(error?.message || error)
+      console.warn('[dsh-interpret] right dock unavailable:', failure)
     }
-  } catch (error) {
-    failure = String(error?.message || error)
-    console.warn('[dsh-interpret] right dock unavailable:', failure)
-  }
+    reportClient()
+  })
 
   try {
     ctx.slots.inject('main', () => ctx.slots.register({ name: 'main', key: 'interpret' }, Panel))
@@ -69,14 +87,5 @@ export function apply(ctx) {
   }
 
   ctx.effect(() => () => controller.dispose(), 'dsh-interpret: dispose client controller')
-  fetch('/interpret/api/client-ready', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      dockAvailable,
-      failure,
-      hasSidebarRight: Boolean(ctx.sidebarRight),
-      hasTabs: Boolean(ctx.sidebarRightTabs),
-    }),
-  }).catch(() => {})
+  reportClient()
 }
