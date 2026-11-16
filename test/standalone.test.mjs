@@ -9,7 +9,11 @@ import { resolveVadModel } from '../src/host/silero-vad.js'
 import { AsrClient } from '../src/host/asr.js'
 import { normalizeConfig } from '../src/host/config.js'
 
-test('system audio helper is bundled inside the plugin', () => {
+test('system audio helper is bundled inside the plugin', (t) => {
+  if (process.platform !== 'darwin' && process.platform !== 'win32') {
+    t.skip('system audio helper is only bundled for macOS and Windows')
+    return
+  }
   const found = findSystemCaptureHelper()
   assert.ok(found.path, 'helper should be found')
   assert.ok(found.path.includes(join('assets', 'system-audio')), 'bundled helper must be preferred: ' + found.path)
