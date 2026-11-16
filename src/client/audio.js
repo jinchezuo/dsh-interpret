@@ -37,14 +37,14 @@ export class MicCapture {
     this.active = false
   }
 
-  async start(deviceId) {
+  async start(deviceId, profile = 'auto') {
     if (this.active) return
-    const audio = {
-      channelCount: 1,
-      echoCancellation: false,
-      noiseSuppression: true,
-      autoGainControl: true,
+    const profiles = {
+      auto: { echoCancellation: false, noiseSuppression: true, autoGainControl: true },
+      clean: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      raw: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
     }
+    const audio = { channelCount: 1, ...(profiles[profile] || profiles.auto) }
     if (deviceId) audio.deviceId = { exact: deviceId }
     this.stream = await navigator.mediaDevices.getUserMedia({ audio, video: false })
     try {
@@ -53,6 +53,8 @@ export class MicCapture {
       this.ctx = new AudioContext()
     }
     if (this.ctx.state === 'suspended') await this.ctx.resume()
+    this.sampleRate = this.ctx.sampleRate
+    this.frames = 0
     this.source = this.ctx.createMediaStreamSource(this.stream)
     this.processor = this.ctx.createScriptProcessor(4096, 1, 1)
     this.processor.onaudioprocess = (event) => {
@@ -62,6 +64,7 @@ export class MicCapture {
         const pcm = toPcm16(samples)
         let sum = 0
         for (let i = 0; i < samples.length; i += 1) sum += samples[i] * samples[i]
+        this.frames += 1
         this.onLevel?.(Math.sqrt(sum / Math.max(1, samples.length)))
         this.onFrame?.(pcm.buffer)
       } catch (error) {

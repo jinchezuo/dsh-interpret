@@ -21,7 +21,7 @@ export function resolveVadModel(dataDir) {
  * falls back to the energy segmenter.
  */
 export class SileroSegmenter {
-  constructor({ dataDir, threshold = 0.5, minSpeechMs = 250, silenceMs = 300, maxSegmentMs = 12000, onSegment }) {
+  constructor({ dataDir, threshold = 0.5, minSpeechMs = 250, silenceMs = 300, maxSegmentMs = 12000, preRollMs = 500, postRollMs = 0, onSegment }) {
     const model = resolveVadModel(dataDir)
     if (!model) throw Object.assign(new Error('Silero VAD 模型不存在'), { code: 'VAD_MODEL_MISSING' })
     const require = createRequire(import.meta.url)
@@ -31,6 +31,8 @@ export class SileroSegmenter {
     this.model = model
     this.sampleRate = 16000
     this.maxSegmentMs = maxSegmentMs
+    this.preRollMs = preRollMs
+    this.postRollMs = postRollMs
     this.onSegment = onSegment || (() => {})
     this.lastVoiceAt = 0
     this.noiseFloor = 0
@@ -90,7 +92,7 @@ export class SileroSegmenter {
       const length = segment.samples.length
       const end = this.totalSamples
       const start = Math.max(0, end - length)
-      const preRoll = this.sliceRing(Math.max(0, start - 4800), start)
+      const preRoll = this.sliceRing(Math.max(0, start - Math.round((this.preRollMs / 1000) * this.sampleRate)), start)
       const samples = new Float32Array(preRoll.length + length)
       samples.set(preRoll, 0)
       samples.set(segment.samples, preRoll.length)

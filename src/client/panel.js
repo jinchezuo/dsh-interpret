@@ -104,7 +104,7 @@ export function LiveRow({ item, showZh = true }) {
     h('div', { className: 'di-meta' },
       h('span', { className: 'di-time' }, '实时'),
       h('span', { className: 'di-src' }, track),
-      h('span', { className: 'di-badge' }, '逐词'),
+      h('span', { className: 'di-badge' }, item.engine === 'parakeet-rolling' ? '精确实时' : '逐词'),
       item.termCorrections?.length ? h('span', {
         className: 'di-badge',
         title: item.termCorrections.map((entry) => entry.from + ' → ' + entry.to).join('\n'),
@@ -119,7 +119,7 @@ export function LiveRow({ item, showZh = true }) {
 
 export function PanelView({ controller, openDock, dockAvailable }) {
   const snapshot = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot)
-  const { state, segments, busy, error, connection, modelProgress, elapsed, testResult, testBusy, draft, live, termSearch, history, historyView, models } = snapshot
+  const { state, segments, busy, error, connection, modelProgress, elapsed, testResult, testBusy, audioInfo, draft, live, termSearch, history, historyView, models } = snapshot
   const listRef = useRef(null)
   const stickRef = useRef(true)
   const [showDropped, setShowDropped] = useState(false)
@@ -298,6 +298,26 @@ export function PanelView({ controller, openDock, dockAvailable }) {
             ? h('div', { className: 'di-note' }, '流式模型 ' + ((models?.streaming?.progress || state?.streaming?.progress).completedBytes / 1048576).toFixed(0) + '/' + ((models?.streaming?.progress || state?.streaming?.progress).totalBytes / 1048576).toFixed(0) + 'MB')
             : null,
           h('div', { className: 'di-note' }, '定稿仍由 Parakeet 复核，术语更准。')),
+
+        h('section', { className: 'di-card' },
+          h('h4', null, '识别精度'),
+          h(Kv, { label: '采样率', value: audioInfo?.sampleRate ? audioInfo.sampleRate + 'Hz' : '未开始' }),
+          h('select', {
+            className: 'di-select',
+            value: state?.config?.liveAsrMode || 'balanced',
+            onChange: (event) => controller.saveConfig({ liveAsrMode: event.target.value }),
+          }, [['fast', '低延迟（弱流式）'], ['balanced', '平衡（流式 + Parakeet 校正）'], ['accurate', '高精度（Parakeet 实时）']].map(([value, label]) => h('option', { key: value, value }, label))),
+          h('select', {
+            className: 'di-select',
+            value: state?.config?.vadProfile || 'robust',
+            onChange: (event) => controller.saveConfig({ vadProfile: event.target.value }),
+          }, [['robust', '切句稳健（推荐，少碎片）'], ['standard', '标准'], ['sensitive', '灵敏（更快出句）']].map(([value, label]) => h('option', { key: value, value }, label))),
+          h('select', {
+            className: 'di-select',
+            value: state?.config?.audioProfile || 'auto',
+            onChange: (event) => controller.saveConfig({ audioProfile: event.target.value }),
+          }, [['auto', '麦克风自动增强'], ['clean', '强降噪/回声消除'], ['raw', '原始音频（诊断用）']].map(([value, label]) => h('option', { key: value, value }, label))),
+          h('div', { className: 'di-note' }, '平衡模式先用流式出字，约 0.6 秒后用 Parakeet 校正；定稿再合并整句。')),
 
         h('section', { className: 'di-card' },
           h('h4', null, '学科术语 RAG'),

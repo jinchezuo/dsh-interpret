@@ -52,6 +52,7 @@ test('pipeline produces bilingual captions and repairs a bad term', async () => 
   const service = new InterpretService(ctx, normalizeConfig({
     dataDir: dir,
     asrProvider: 'sensevoice-local',
+    liveTranslate: false,
     systemAudio: 'off',
     vadMode: 'energy',
     minSpeechMs: 200,
@@ -88,6 +89,7 @@ test('non-English speech is dropped without translation', async () => {
   const service = new InterpretService(ctx, normalizeConfig({
     dataDir: dir,
     asrProvider: 'sensevoice-local',
+    liveTranslate: false,
     systemAudio: 'off',
     vadMode: 'energy',
     minSpeechMs: 200,
@@ -116,6 +118,7 @@ test('draft recognition emits a cleared draft when final caption arrives', async
   const service = new InterpretService(ctx, normalizeConfig({
     dataDir: dir,
     asrProvider: 'sensevoice-local',
+    liveTranslate: false,
     systemAudio: 'off',
     vadMode: 'energy',
     draftMode: true,
@@ -152,6 +155,7 @@ test('session store lists, renames, exports and deletes a completed session', as
   const service = new InterpretService(ctx, normalizeConfig({
     dataDir: dir,
     asrProvider: 'sensevoice-local',
+    liveTranslate: false,
     systemAudio: 'off',
     vadMode: 'energy',
     minSpeechMs: 200,

@@ -148,6 +148,11 @@ export class InterpretService {
     this.draftInFlight = false
     this.draftEpoch = 0
     this.lastDraft = {}
+    this.pendingSegments = { mic: null, system: null }
+    this.mergeTimers = { mic: null, system: null }
+    this.liveRollingAt = { mic: 0, system: 0 }
+    this.liveRollingInFlight = { mic: false, system: false }
+    this.liveGeneration = 0
     this.disposed = false
   }
 
@@ -159,11 +164,11 @@ export class InterpretService {
   }
 
   applySettings(patch = {}) {
-    const allowed = ['asrProvider', 'asrModelDir', 'mtProvider', 'mtModel', 'autoTranslate', 'systemAudio', 'draftMode', 'draftIntervalMs', 'vadMode', 'brief', 'vadThreshold', 'minSpeechMs', 'silenceMs', 'maxSegmentMs', 'mtEffort', 'temperature', 'maxOutputTokens', 'streamingMode', 'streamingModelDir', 'liveTranslate', 'liveTranslateIntervalMs', 'terminologyMode', 'terminologyDomains', 'terminologyTopK', 'termCorrection', 'termCorrectionTimeoutMs', 'termCorrectionMaxEdits', 'showPronunciation']
+    const allowed = ['asrProvider', 'asrModelDir', 'mtProvider', 'mtModel', 'autoTranslate', 'systemAudio', 'draftMode', 'draftIntervalMs', 'vadMode', 'brief', 'vadThreshold', 'minSpeechMs', 'silenceMs', 'maxSegmentMs', 'mtEffort', 'temperature', 'maxOutputTokens', 'streamingMode', 'streamingModelDir', 'liveTranslate', 'liveTranslateIntervalMs', 'terminologyMode', 'terminologyDomains', 'terminologyTopK', 'termCorrection', 'termCorrectionTimeoutMs', 'termCorrectionMaxEdits', 'showPronunciation', 'vadProfile', 'mergeGapMs', 'preRollMs', 'postRollMs', 'liveAsrMode', 'rollingIntervalMs', 'finalAsrProvider', 'audioProfile', 'semanticProofread']
     for (const key of allowed) {
       if (patch[key] === undefined) continue
-      if (['autoTranslate', 'liveTranslate', 'termCorrection', 'showPronunciation'].includes(key)) this.config[key] = patch[key] !== false
-      else if (['vadThreshold', 'temperature', 'maxOutputTokens', 'minSpeechMs', 'silenceMs', 'maxSegmentMs', 'liveTranslateIntervalMs', 'terminologyTopK', 'termCorrectionTimeoutMs', 'termCorrectionMaxEdits'].includes(key)) {
+      if (['autoTranslate', 'liveTranslate', 'termCorrection', 'showPronunciation', 'semanticProofread'].includes(key)) this.config[key] = patch[key] !== false
+      else if (['vadThreshold', 'temperature', 'maxOutputTokens', 'minSpeechMs', 'silenceMs', 'maxSegmentMs', 'liveTranslateIntervalMs', 'terminologyTopK', 'termCorrectionTimeoutMs', 'termCorrectionMaxEdits', 'mergeGapMs', 'preRollMs', 'postRollMs', 'rollingIntervalMs'].includes(key)) {
         const value = Number(patch[key])
         if (Number.isFinite(value)) this.config[key] = value
       } else this.config[key] = String(patch[key] || '')
@@ -182,6 +187,14 @@ export class InterpretService {
       systemAudio: this.config.systemAudio,
       draftMode: this.config.draftMode,
       draftIntervalMs: this.config.draftIntervalMs,
+      vadProfile: this.config.vadProfile,
+      mergeGapMs: this.config.mergeGapMs,
+      preRollMs: this.config.preRollMs,
+      postRollMs: this.config.postRollMs,
+      liveAsrMode: this.config.liveAsrMode,
+      rollingIntervalMs: this.config.rollingIntervalMs,
+      audioProfile: this.config.audioProfile,
+      semanticProofread: this.config.semanticProofread,
       streamingMode: this.config.streamingMode,
       streamingModelDir: this.config.streamingModelDir,
       liveTranslate: this.config.liveTranslate,
@@ -217,16 +230,36 @@ export class InterpretService {
     }
   }
 
+  vadSettings() {
+    const profile = this.config.vadProfile || 'robust'
+    const silenceMs = profile === 'robust' ? Math.max(1000, this.config.silenceMs)
+      : profile === 'standard' ? Math.max(700, this.config.silenceMs)
+        : Math.max(400, Math.min(this.config.silenceMs, 600))
+    const minSpeechMs = profile === 'robust' ? Math.max(500, this.config.minSpeechMs)
+      : profile === 'standard' ? Math.max(350, this.config.minSpeechMs)
+        : Math.max(200, Math.min(this.config.minSpeechMs, 350))
+    return {
+      silenceMs,
+      minSpeechMs,
+      maxSegmentMs: Math.max(12000, this.config.maxSegmentMs || 20000),
+      preRollMs: this.config.preRollMs ?? 500,
+      postRollMs: this.config.postRollMs ?? 300,
+    }
+  }
+
   createSegmenter(track) {
-    const onSegment = (segment) => this.enqueueSegment({ ...segment, track })
+    const onSegment = (segment) => this.acceptSegment({ ...segment, track })
+    const vad = this.vadSettings()
     if (this.config.vadMode !== 'energy') {
       try {
         return new SileroSegmenter({
           dataDir: this.dataDir,
           threshold: 0.5,
-          minSpeechMs: this.config.minSpeechMs,
-          silenceMs: this.config.silenceMs,
-          maxSegmentMs: this.config.maxSegmentMs,
+          minSpeechMs: vad.minSpeechMs,
+          silenceMs: vad.silenceMs,
+          maxSegmentMs: vad.maxSegmentMs,
+          preRollMs: vad.preRollMs,
+          postRollMs: vad.postRollMs,
           onSegment,
         })
       } catch (error) {
@@ -235,11 +268,60 @@ export class InterpretService {
     }
     return new EnergySegmenter({
       threshold: this.config.vadThreshold,
-      minSpeechMs: this.config.minSpeechMs,
-      silenceMs: this.config.silenceMs,
-      maxSegmentMs: this.config.maxSegmentMs,
+      minSpeechMs: vad.minSpeechMs,
+      silenceMs: vad.silenceMs,
+      maxSegmentMs: vad.maxSegmentMs,
+      preRollMs: vad.preRollMs,
       onSegment,
     })
+  }
+
+  acceptSegment(segment) {
+    const track = segment.track === 'system' ? 'system' : 'mic'
+    const pending = this.pendingSegments[track]
+    const gapMs = pending ? Math.max(0, segment.startMs - pending.endMs) : 0
+    const mergedMs = pending ? segment.endMs - pending.startMs : 0
+    if (pending && gapMs <= (this.config.mergeGapMs ?? 1200) && mergedMs <= (this.config.maxSegmentMs || 20000)) {
+      const gapSamples = Math.round((gapMs / 1000) * 16000)
+      const samples = new Float32Array(pending.samples.length + gapSamples + segment.samples.length)
+      samples.set(pending.samples, 0)
+      samples.set(segment.samples, pending.samples.length + gapSamples)
+      this.pendingSegments[track] = { track, samples, startMs: pending.startMs, endMs: segment.endMs }
+    } else {
+      this.flushPendingSegment(track)
+      this.pendingSegments[track] = segment
+    }
+    this.schedulePendingSegment(track)
+  }
+
+  schedulePendingSegment(track) {
+    if (this.mergeTimers[track]) clearTimeout(this.mergeTimers[track])
+    this.mergeTimers[track] = setTimeout(() => {
+      this.mergeTimers[track] = null
+      this.flushPendingSegment(track)
+    }, this.config.mergeGapMs ?? 1200)
+    this.mergeTimers[track].unref?.()
+  }
+
+  flushPendingSegment(track) {
+    if (this.mergeTimers[track]) {
+      clearTimeout(this.mergeTimers[track])
+      this.mergeTimers[track] = null
+    }
+    const segment = this.pendingSegments[track]
+    if (!segment) return
+    this.pendingSegments[track] = null
+    this.queue = this.queue
+      .then(() => this.processSegment(segment))
+      .catch((error) => {
+        this.log.error('segment pipeline failed:', error?.message || error)
+        this.recordError(error)
+      })
+  }
+
+  flushPendingSegments() {
+    this.flushPendingSegment('mic')
+    this.flushPendingSegment('system')
   }
 
   freshStats() {
@@ -321,6 +403,14 @@ export class InterpretService {
         systemAudio: this.config.systemAudio,
         draftMode: this.config.draftMode,
         draftIntervalMs: this.config.draftIntervalMs,
+        vadProfile: this.config.vadProfile,
+        mergeGapMs: this.config.mergeGapMs,
+        preRollMs: this.config.preRollMs,
+        postRollMs: this.config.postRollMs,
+        liveAsrMode: this.config.liveAsrMode,
+        rollingIntervalMs: this.config.rollingIntervalMs,
+        audioProfile: this.config.audioProfile,
+        semanticProofread: this.config.semanticProofread,
         streamingMode: this.config.streamingMode,
         streamingModelDir: this.config.streamingModelDir,
         liveTranslate: this.config.liveTranslate,
@@ -423,18 +513,23 @@ export class InterpretService {
     this.phase = 'listening'
     this.segmenters.mic.reset()
     this.segmenters.system.reset()
+    this.pendingSegments = { mic: null, system: null }
+    this.mergeTimers = { mic: null, system: null }
+    this.liveGeneration += 1
     this.live = { mic: null, system: null }
     this.liveTranslateState = {
       mic: { at: 0, inflight: false, pendingText: '', controller: null },
       system: { at: 0, inflight: false, pendingText: '', controller: null },
     }
+    this.liveRollingAt = { mic: 0, system: 0 }
+    this.liveRollingInFlight = { mic: false, system: false }
     this.streaming.reset('mic')
     this.streaming.reset('system')
     this.refreshTerminologyDomains()
     await this.persistMeta()
     this.emit('state', this.describe())
     this.startIdleWatch()
-    if (streamingReady) this.startLiveLoop()
+    if (streamingReady || this.config.liveAsrMode !== 'fast') this.startLiveLoop()
     else this.startDraftLoop()
     if (this.config.systemAudio !== 'off') this.startSystemCapture()
     return this.describe()
@@ -454,38 +549,92 @@ export class InterpretService {
   }
 
   tickLive() {
-    if (this.phase !== 'listening' || !this.streamingReady) return
+    if (this.phase !== 'listening') return
+    const mode = this.config.liveAsrMode || 'balanced'
     for (const track of ['mic', 'system']) {
-      let text = this.streaming.poll(track)
-      if (!text || !isLiveEnglish(text)) continue
-      let corrections = []
-      if (this.config.terminologyMode !== 'off' && this.terminology.ready && this.config.termCorrection && text.split(/\s+/).filter(Boolean).length >= 4) {
-        this.refreshTerminologyDomains()
-        const corrected = this.terminology.correctLive(text, this.terminologyGateDomains())
-        if (corrected.text !== text) {
-          text = corrected.text
-          corrections = corrected.corrections
+      let text = ''
+      if (mode !== 'accurate' && this.streamingReady) {
+        text = this.streaming.poll(track)
+      }
+      if (text && isLiveEnglish(text)) {
+        let corrections = []
+        if (this.config.terminologyMode !== 'off' && this.terminology.ready && this.config.termCorrection && text.split(/\s+/).filter(Boolean).length >= 4) {
+          this.refreshTerminologyDomains()
+          const corrected = this.terminology.correctLive(text, this.terminologyGateDomains())
+          if (corrected.text !== text) {
+            text = corrected.text
+            corrections = corrected.corrections
+          }
+        }
+        const previous = this.live[track]
+        if (previous?.en !== text) {
+          const active = this.segmenters[track].active?.(8)
+          this.live[track] = {
+            track,
+            startMs: active?.startMs ?? Math.max(0, Date.now() - (this.startedAt || Date.now())),
+            en: text,
+            zh: previous?.zh || '',
+            provisional: true,
+            engine: 'streaming',
+            termCorrections: corrections,
+            at: Date.now(),
+          }
+          this.stats.liveUpdates = (this.stats.liveUpdates || 0) + 1
+          this.emit('live', this.live[track])
+          this.maybeTranslateLive(track)
         }
       }
-      const previous = this.live[track]
-      if (previous?.en === text) continue
-      const active = this.segmenters[track].active?.(8)
-      this.live[track] = {
-        track,
-        startMs: active?.startMs ?? Math.max(0, Date.now() - (this.startedAt || Date.now())),
-        en: text,
-        zh: previous?.zh || '',
-        provisional: true,
-        termCorrections: corrections,
-        at: Date.now(),
-      }
-      this.stats.liveUpdates = (this.stats.liveUpdates || 0) + 1
-      this.emit('live', this.live[track])
-      this.maybeTranslateLive(track)
+      if (mode !== 'fast') this.maybeRollingLive(track)
     }
   }
 
+  maybeRollingLive(track) {
+    const now = Date.now()
+    if (this.liveRollingInFlight[track]) return
+    if (now - (this.liveRollingAt[track] || 0) < (this.config.rollingIntervalMs || 600)) return
+    const active = this.segmenters[track].active?.(8)
+    if (!active || active.samples.length < 16000 * 0.7) return
+    this.liveRollingAt[track] = now
+    this.liveRollingInFlight[track] = true
+    const generation = this.liveGeneration
+    this.asr.transcribe(active.samples)
+      .then((result) => {
+        if (this.phase !== 'listening' || generation !== this.liveGeneration) return
+        const text = String(result?.text || '').trim()
+        if (!text || !isLiveEnglish(text)) return
+        const previous = this.live[track]
+        if (previous?.en === text) return
+        let correctedText = text
+        let corrections = []
+        if (this.config.terminologyMode !== 'off' && this.terminology.ready && this.config.termCorrection) {
+          const corrected = this.terminology.correctLive(text, this.terminologyGateDomains())
+          if (corrected.text !== text) {
+            correctedText = corrected.text
+            corrections = corrected.corrections
+          }
+        }
+        this.live[track] = {
+          track,
+          startMs: active.startMs,
+          en: correctedText,
+          zh: '',
+          provisional: true,
+          engine: 'parakeet-rolling',
+          termCorrections: corrections,
+          at: Date.now(),
+        }
+        this.stats.liveUpdates = (this.stats.liveUpdates || 0) + 1
+        this.emit('live', this.live[track])
+        this.maybeTranslateLive(track)
+      })
+      .catch((error) => {
+        if (this.phase === 'listening') this.log.warn('rolling live decode failed:', error?.message || error)
+      })
+      .finally(() => { this.liveRollingInFlight[track] = false })
+  }
+
   clearLive(track) {
+    this.liveGeneration += 1
     this.abortLiveTranslation(track)
     if (!this.live[track]) return
     this.live[track] = null
@@ -643,6 +792,7 @@ export class InterpretService {
     try {
       this.segmenters.mic.flush()
       this.segmenters.system.flush()
+      this.flushPendingSegments()
       await this.systemCapture?.stop().catch((error) => this.log.warn('system capture stop:', error?.message || error))
       this.systemCapture = null
       await withTimeout(this.queue, 20_000)
@@ -1230,6 +1380,9 @@ export class InterpretService {
     this.clearIdleWatch()
     this.clearDraftLoop()
     this.clearLiveLoop()
+    if (this.mergeTimers.mic) clearTimeout(this.mergeTimers.mic)
+    if (this.mergeTimers.system) clearTimeout(this.mergeTimers.system)
+    this.pendingSegments = { mic: null, system: null }
     this.abortLiveTranslation('mic')
     this.abortLiveTranslation('system')
     try { this.streaming.dispose() } catch {}

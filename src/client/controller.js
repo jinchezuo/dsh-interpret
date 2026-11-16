@@ -11,6 +11,7 @@ const EMPTY = {
   elapsed: 0,
   testBusy: false,
   testResult: null,
+  audioInfo: null,
   draft: null,
   live: {},
   termSearch: { query: '', results: [], busy: false },
@@ -251,7 +252,8 @@ export class Controller {
     if (this.snapshot.state?.phase === 'listening') return
     this.update({ busy: true, error: null })
     try {
-      await this.capture.start()
+      await this.capture.start(undefined, this.snapshot.state?.config?.audioProfile || 'auto')
+      this.update({ audioInfo: { sampleRate: this.capture.sampleRate || 0, frames: this.capture.frames || 0 } })
       const payload = await this.request('/session/start', { method: 'POST', body: { title: '' } })
       this.segmentMap = new Map()
       this.setState(payload.data, { segments: [], draft: null, live: {}, error: null, status: 'ready' })
