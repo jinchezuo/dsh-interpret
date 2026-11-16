@@ -68,12 +68,12 @@ DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解
 - 已配置可用的 DSH LLM 路由；
 - 首次使用模型准备需要联网。
 
-> 把下面的 `YOUR_GITHUB` 替换为你的 GitHub 用户名或组织名。
+> 把下面的 `jinchezuo` 替换为你的 GitHub 用户名或组织名。
 
 ### 方式 A：从 GitHub 源码安装
 
 ```bash
-git clone https://github.com/YOUR_GITHUB/dsh-interpret.git
+git clone https://github.com/jinchezuo/dsh-interpret.git
 cd dsh-interpret
 pnpm install
 pnpm build

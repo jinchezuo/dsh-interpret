@@ -6,6 +6,6 @@ type: software
 authors:
   - name: "dsh-interpret contributors"
 license: MIT
-repository-code: "https://github.com/YOUR_GITHUB/dsh-interpret"
+repository-code: "https://github.com/jinchezuo/dsh-interpret"
 version: "1.0.0"
 date-released: "2026-11-16"
