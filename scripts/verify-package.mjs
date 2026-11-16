@@ -24,7 +24,7 @@ const deps = Object.keys(pkg.dependencies || {})
 if (deps.some((name) => name.startsWith('@huliux/') || name.includes('dsh-asr'))) {
   problems.push('external DSH plugin dependency found: ' + deps.join(', '))
 }
-if (!pkg.files?.includes('assets') || !pkg.files?.includes('src')) problems.push('files must include assets and src')
+if (!pkg.files?.includes('assets') || !pkg.files?.includes('src/host') || !pkg.files?.includes('src/client')) problems.push('files must include assets, src/host and src/client')
 const capture = await readFile(join(root, 'src/host/system-capture.js'), 'utf8')
 if (!capture.includes("assets', 'system-audio'") && !capture.includes('assets/system-audio')) {
   problems.push('system-capture does not prefer the bundled helper')

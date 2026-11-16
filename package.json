@@ -63,7 +63,10 @@
     "esbuild": "^0.28.2"
   },
   "files": [
-    "src",
+    "src/host",
+    "src/client",
+    "src/win-audio/Program.cs",
+    "src/win-audio/DshInterpret.AudioCapture.csproj",
     "lib",
     "assets",
     "cordis.patch.yml",

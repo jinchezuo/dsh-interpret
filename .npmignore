@@ -1,0 +1,7 @@
+src/win-audio/bin/
+src/win-audio/obj/
+build/
+release/
+logs/
+.test-data*/
+.env

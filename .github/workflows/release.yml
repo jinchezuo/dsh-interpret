@@ -58,7 +58,7 @@ jobs:
           $pkg = Get-ChildItem release/*.tgz | Select-Object -First 1
           $stem = [System.IO.Path]::GetFileNameWithoutExtension($pkg.Name)
           $target = Join-Path release ($stem + "-win32-x64.tgz")
-          Rename-Item $pkg.FullName $target
+          Move-Item -LiteralPath $pkg.FullName -Destination $target
       - uses: actions/upload-artifact@v4
         with:
           name: package-windows

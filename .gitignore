@@ -12,5 +12,7 @@ logs/
 dist/
 build/
 release/
+src/win-audio/bin/
+src/win-audio/obj/
 coverage/
 *.tgz
