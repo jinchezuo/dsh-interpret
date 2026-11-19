@@ -9,9 +9,9 @@
 - [x] Windows CI 构建 WASAPI helper
 - [ ] Windows helper 实机采集验证
 - [x] tarball 包含 macOS helper、VAD、reader.py、client.js
-- [ ] Windows CI 生成并上传 win32-x64 artifact
-- [ ] Windows artifact 包含 win32-x64 exe、client.js、translate/routes
-- [ ] Windows artifact 的 client.js 与 Mac 构建哈希一致
+- [x] Windows CI 生成并上传 win32-x64 artifact
+- [x] Windows artifact 包含 win32-x64 exe、client.js、translate/routes
+- [x] Windows artifact 的 client.js 与 Mac 构建哈希一致
 - [x] 临时 profile 只安装一个 tarball，npm 依赖自动安装
 
 ## macOS
