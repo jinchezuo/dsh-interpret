@@ -2,6 +2,7 @@ import { createElement as h, useEffect, useRef, useState, useSyncExternalStore }
 import { InterpretIcon } from './icon.js'
 import { CaptionRow, LiveRow, fmtClock } from './rows.js'
 import { ReaderPane } from './reader.js'
+import { PRESETS, choosePreset, findModel, flattenRoutes, tagsForModel } from './model-choice.js'
 
 const PHASE_LABEL = {
   idle: '空闲',
@@ -49,7 +50,7 @@ function Kv(props) {
 
 export function PanelView({ controller, openDock, dockAvailable }) {
   const snapshot = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot)
-  const { state, segments, busy, error, connection, modelProgress, elapsed, testResult, testBusy, audioInfo, dock, draft, live, termSearch, history, historyView, models } = snapshot
+  const { state, segments, busy, error, connection, modelProgress, elapsed, testResult, testBusy, audioInfo, dock, draft, live, termSearch, history, historyView, models, mtRoutes } = snapshot
   const listRef = useRef(null)
   const stickRef = useRef(true)
   const [showDropped, setShowDropped] = useState(false)
@@ -110,6 +111,19 @@ export function PanelView({ controller, openDock, dockAvailable }) {
   const providerReady = picked?.preparation?.phase === 'ready'
   const autoTranslate = state?.config?.autoTranslate !== false
   const mt = state?.mt
+  const routes = Array.isArray(mtRoutes?.routes) ? mtRoutes.routes : []
+  const flatModels = flattenRoutes(routes)
+  const configuredProvider = state?.config?.mtProvider || ''
+  const configuredModel = state?.config?.mtModel || ''
+  const selectedInfo = configuredModel
+    ? (flatModels.find((item) => item.model === configuredModel && (!configuredProvider || item.provider === configuredProvider)) || findModel(routes, configuredProvider, configuredModel))
+    : null
+  const activeProvider = configuredProvider || selectedInfo?.provider || ''
+  const providerModels = routes.find((route) => route.id === activeProvider)?.models || []
+  const mtWarning = state?.mtWarning || mtRoutes?.warning || ''
+  const mtError = mtRoutes?.error || ''
+  const canSwitchModel = !busy && !running && !stopping && routes.length > 0
+  const presetChoices = PRESETS.map((preset) => ({ ...preset, choice: choosePreset(routes, preset.id) }))
   const visible = segments.filter((segment) => showDropped || segment.status !== 'dropped')
   const liveRows = [live?.mic, live?.system].filter((item) => item?.en)
   const errorText = error || state?.lastError?.message || ''
@@ -130,6 +144,35 @@ export function PanelView({ controller, openDock, dockAvailable }) {
     const el = listRef.current
     if (!el) return
     stickRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 160
+  }
+
+  const applyModelPreset = (preset) => {
+    if (!canSwitchModel) return
+    if (preset === 'auto') {
+      controller.saveConfig({ mtProvider: '', mtModel: '' })
+      return
+    }
+    const choice = choosePreset(routes, preset)
+    if (choice) controller.saveConfig({ mtProvider: choice.provider, mtModel: choice.model })
+  }
+
+  const onProviderChange = (event) => {
+    const provider = event.target.value
+    if (!provider) {
+      controller.saveConfig({ mtProvider: '', mtModel: '' })
+      return
+    }
+    const route = routes.find((item) => item.id === provider)
+    controller.saveConfig({ mtProvider: provider, mtModel: route?.models?.[0]?.id || '' })
+  }
+
+  const onModelChange = (event) => {
+    controller.saveConfig({ mtProvider: activeProvider, mtModel: event.target.value })
+  }
+
+  const modelLabel = (model) => {
+    const tags = tagsForModel(model)
+    return (model.name || model.id) + (tags.length ? ' [' + tags.join('] [') + ']' : '')
   }
 
   return h('div', { className: 'dsh-interpret-root' },
@@ -310,9 +353,64 @@ export function PanelView({ controller, openDock, dockAvailable }) {
             h('button', { className: 'di-btn', onClick: () => controller.prepareVad() }, '下载 Silero VAD（2MB）')) : h('div', { className: 'di-note' }, '本机语音活动检测已就绪。')),
 
         h('section', { className: 'di-card' },
+          h('h4', null, '翻译模型'),
+          h(Kv, { label: '当前实际', value: mt ? mt.provider + ' / ' + mt.model : (autoTranslate ? '自动选择中' : '翻译已关闭') }),
+          !routes.length
+            ? h('div', null,
+                h('div', { className: 'di-note' }, mtError || '未发现可用翻译模型，请先在 DSH 设置中配置 provider 与密钥。'),
+                h('div', { className: 'di-actions' },
+                  h('button', { className: 'di-btn', disabled: busy, onClick: () => controller.loadMtRoutes() }, '重新读取模型')))
+            : h('div', null,
+                h('div', { className: 'di-note' }, '服务商'),
+                h('select', {
+                  className: 'di-select',
+                  value: configuredProvider,
+                  disabled: !canSwitchModel,
+                  onChange: onProviderChange,
+                }, [
+                  h('option', { key: 'provider-auto', value: '' }, '自动（DSH 选择）'),
+                  ...routes.map((route) => h('option', { key: route.id, value: route.id }, route.name || route.id)),
+                  configuredProvider && !routes.some((route) => route.id === configuredProvider)
+                    ? h('option', { key: 'provider-missing', value: configuredProvider }, configuredProvider + '（不可用）')
+                    : null,
+                ]),
+                h('div', { className: 'di-note' }, '模型'),
+                h('select', {
+                  className: 'di-select',
+                  value: configuredModel,
+                  disabled: !canSwitchModel || !activeProvider,
+                  onChange: onModelChange,
+                }, [
+                  h('option', { key: 'model-auto', value: '' }, activeProvider ? '自动（该服务商首个模型）' : '请先选择服务商'),
+                  ...providerModels.map((model) => h('option', { key: activeProvider + '/' + model.id, value: model.id }, modelLabel(model))),
+                  configuredModel && !providerModels.some((model) => model.id === configuredModel)
+                    ? h('option', { key: 'model-missing', value: configuredModel }, configuredModel + '（不可用）')
+                    : null,
+                ]),
+                selectedInfo?.description ? h('div', { className: 'di-note' }, selectedInfo.description) : null,
+                h('div', { className: 'di-actions' },
+                  h('button', {
+                    className: 'di-btn ghost',
+                    disabled: !canSwitchModel,
+                    title: '清除已保存的模型，由 DSH 自动选择',
+                    onClick: () => applyModelPreset('auto'),
+                  }, '自动'),
+                  ...presetChoices.map((preset) => h('button', {
+                    key: preset.id,
+                    className: 'di-btn ghost',
+                    disabled: !canSwitchModel || !preset.choice,
+                    title: preset.choice ? preset.choice.providerName + ' / ' + preset.choice.name + ' — ' + preset.title : preset.title,
+                    onClick: () => applyModelPreset(preset.id),
+                  }, preset.label))),
+                h('div', { className: 'di-note' }, '可用 ' + flatModels.length + ' 个模型；来自 DSH 已配置路由，未出现的模型需先在 DSH 设置中配置。费用按 DSH 账单结算，单价之外还取决于句数与草稿频率；优先 Flash/Mini 或开源系。'),
+                (running || stopping) ? h('div', { className: 'di-note' }, '同传进行中不可切换，停止后生效。') : null,
+                mtWarning ? h('div', { className: 'di-note', style: { color: 'var(--di-danger)' } }, mtWarning) : null,
+                h('div', { className: 'di-actions' },
+                  h('button', { className: 'di-btn', disabled: busy, onClick: () => controller.loadMtRoutes() }, '重新读取模型'))),
+          h('div', { className: 'di-note' }, '模型切换只影响翻译，不改变本机 ASR。')),
+
+        h('section', { className: 'di-card' },
           h('h4', null, '翻译'),
-          h(Kv, { label: '路由', value: mt?.provider || '未选择' }),
-          h(Kv, { label: '模型', value: mt?.model || '—' }),
           h(Kv, { label: '模式', value: autoTranslate ? '英译中' : '只转写' }),
           h('label', { className: 'di-note', style: { display: 'flex', gap: '6px', alignItems: 'center', marginTop: '6px' } },
             h('input', {
@@ -353,9 +451,7 @@ export function PanelView({ controller, openDock, dockAvailable }) {
             h('button', {
               className: 'di-btn',
               onClick: () => { controller.saveConfig({ brief }).then(() => setBriefDirty(false)) },
-            }, '保存场景说明')),
-          h('div', { className: 'di-actions' },
-            h('button', { className: 'di-btn', disabled: busy, onClick: () => controller.refresh() }, '重新检测路由'))),
+            }, '保存场景说明'))),
 
         h('section', { className: 'di-card' },
           h('h4', null, '翻译自测'),
@@ -373,7 +469,11 @@ export function PanelView({ controller, openDock, dockAvailable }) {
               }, testBusy ? '翻译中…' : '试翻译'))),
           testResult ? h('div', { className: 'di-result', style: { marginTop: '8px' } },
             testResult.ok
-              ? testResult.text
+              ? h('div', null,
+                  h('div', null, testResult.text),
+                  testResult.provider || testResult.model
+                    ? h('div', { className: 'di-note' }, '实际模型：' + [testResult.provider, testResult.model].filter(Boolean).join(' / '))
+                    : null)
               : ('失败: ' + testResult.message)) : null),
 
         h('section', { className: 'di-card' },

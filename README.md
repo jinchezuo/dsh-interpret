@@ -40,6 +40,7 @@ DeepSeek Harness 的本地实时英中同传字幕插件：把现场英文讲解
 - 本地 ASR：默认 Parakeet TDT 0.6B v2（英文 int8），适合学术术语与低延迟。
 - 实时逐词字幕 + 最终定稿复核：实时行会随句尾校正替换。
 - 英译中：使用 DSH 已配置的 LLM 路由，流式显示中文。
+- 翻译模型选择：设置栏可从 DSH 已配置的 provider/model 中切换，提供自动、省钱优先、高质量、开源系快捷方案；费用按 DSH 账单结算。
 - 学术术语 RAG：约 3,000 条八学科术语，含英文释义、UK/US 音标、别名和常见误听；定稿前做术语校验，实时只做高置信纠正。
 - 讲义阅读器：PDF、DOC、DOCX、XLSX、CSV、MD、PPTX。
 - 会话落盘与历史：查看、重命名、删除、导出双语 SRT/Markdown。
@@ -94,10 +95,10 @@ powershell -ExecutionPolicy Bypass -File scripts/build-win-audio.ps1
 
 ### 方式 B：从 Release tarball 安装
 
-macOS 下载 dsh-interpret-1.1.2.tgz；Windows x64 必须下载 dsh-interpret-1.1.2-win32-x64.tgz（内含 WASAPI helper）：
+macOS 下载 dsh-interpret-1.2.0.tgz；Windows x64 必须下载 dsh-interpret-1.2.0-win32-x64.tgz（内含 WASAPI helper）：
 
 ```bash
-dsh plugin --profile desktop add /path/to/dsh-interpret-1.1.2-win32-x64.tgz
+dsh plugin --profile desktop add /path/to/dsh-interpret-1.2.0-win32-x64.tgz
 ```
 
 DSH 的插件命令会把 npm 依赖（包括 sherpa-onnx-node）一起安装。Windows 源码安装需要先运行：
@@ -140,7 +141,7 @@ dsh plugin --profile desktop remove dsh-interpret
 - 点「讲义」在右侧打开文件阅读器，支持打开/拖入/最近文件/删除；
 - 点「保存并刷新」把刚结束的会话写入历史并清空页面；
 - 历史区域可查看、重命名、删除、导出 SRT/Markdown；
-- 设置区域可调整 ASR、翻译、VAD、术语、音频配置。
+- 设置区域可调整 ASR、翻译模型、翻译、VAD、术语、音频配置；「翻译模型」卡片会列出 DSH 当前可用的模型。
 
 详细说明：[安装](docs/installation.md) · [使用](docs/usage.md) · [配置](docs/configuration.md) · [故障排查](docs/troubleshooting.md)
 

@@ -45,7 +45,7 @@ export function registerApi(ctx, service) {
           ok: true,
           data: {
             name: 'dsh-interpret',
-            version: '1.1.2',
+            version: '1.2.0',
             client: { registered: Boolean(clientPath), path: clientPath || null, boot: bootEntry },
             phase: state.phase,
             asr: state.asr?.picked ? { id: state.asr.picked.id, preparation: state.asr.picked.preparation } : null,
@@ -335,6 +335,12 @@ export function registerApi(ctx, service) {
         const body = await readJson(req, 64 * 1024)
         await service.prepare(String(body?.providerId || ''))
         sendJson(res, 200, { ok: true, data: service.describe() })
+        return
+      }
+
+      if (path === '/translate/routes') {
+        if (method !== 'GET') return methodNotAllowed(res, ['GET'])
+        sendJson(res, 200, { ok: true, data: await service.describeTranslation(true) })
         return
       }
 

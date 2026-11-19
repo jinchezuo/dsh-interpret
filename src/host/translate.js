@@ -8,6 +8,7 @@ export class Translator {
     this.log = log
     this.cache = null
     this.cachedAt = 0
+    this.lastWarning = ''
   }
 
   llm() {
@@ -44,6 +45,7 @@ export class Translator {
         models: (Array.isArray(models) ? models : []).map((model) => ({
           id: String(model?.id || ''),
           name: String(model?.name || model?.id || ''),
+          description: String(model?.description || ''),
         })).filter((model) => model.id),
       })
     }
@@ -52,43 +54,80 @@ export class Translator {
     return this.cache
   }
 
-  /** Prefer a configured route, then a flash model, then the first usable pair. */
-  async pickRoute(force = false) {
-    const { routes } = await this.listRoutes(force)
-    if (this.config.mtProvider && this.config.mtModel) {
-      return { provider: this.config.mtProvider, model: this.config.mtModel }
+  invalidate() {
+    this.cache = null
+    this.cachedAt = 0
+    this.lastWarning = ''
+  }
+
+  /** Validate the saved provider/model pair against the routes DSH currently exposes. */
+  findConfigured(routes) {
+    const provider = String(this.config.mtProvider || '').trim()
+    const model = String(this.config.mtModel || '').trim()
+    if (!provider && !model) return null
+    if (provider && model) {
+      const route = routes.find((item) => item.id === provider)
+      const found = route?.models.find((item) => item.id === model)
+      return found ? { provider: route.id, model: found.id } : null
     }
-    if (this.config.mtProvider) {
-      const route = routes.find((item) => item.id === this.config.mtProvider)
-      const model = route?.models.find((item) => item.id === this.config.mtModel) || route?.models[0]
-      if (route && model) return { provider: route.id, model: model.id }
+    if (provider) {
+      const route = routes.find((item) => item.id === provider)
+      const found = route?.models[0]
+      return found ? { provider: route.id, model: found.id } : null
     }
-    const preferred = this.config.mtModel
-    if (preferred) {
-      for (const route of routes) {
-        const match = route.models.find((model) => model.id === preferred)
-        if (match) return { provider: route.id, model: match.id }
-      }
+    for (const route of routes) {
+      const found = route.models.find((item) => item.id === model)
+      if (found) return { provider: route.id, model: found.id }
+    }
+    return null
+  }
+
+  /** Prefer a valid configured route, then a flash model, then the first usable pair. */
+  async pickRoute(force = false, knownRoutes = null, knownError = '') {
+    const { routes, error } = knownRoutes ? { routes: knownRoutes, error: knownError } : await this.listRoutes(force)
+    this.lastWarning = ''
+    const provider = String(this.config.mtProvider || '').trim()
+    const model = String(this.config.mtModel || '').trim()
+    if (provider || model) {
+      const configured = this.findConfigured(routes)
+      if (configured) return configured
+      const requested = provider && model ? provider + ' / ' + model : (provider || model)
+      this.lastWarning = '已保存的翻译模型「' + requested + '」不在当前 DSH 路由中，已自动切换。'
+    }
+    if (!routes.length) {
+      this.lastWarning = error || '没有已配置的翻译模型路由'
+      return null
     }
     const account = routes.find((route) => /account/i.test(route.id))
     if (account) {
-      const flash = account.models.find((model) => /flash/i.test(model.id))
+      const flash = account.models.find((item) => /flash/i.test(item.id))
       if (flash) return { provider: account.id, model: flash.id }
       if (account.models.length) return { provider: account.id, model: account.models[0].id }
     }
     for (const route of routes) {
-      const flash = route.models.find((model) => /flash/i.test(model.id))
+      const flash = route.models.find((item) => /flash/i.test(item.id))
       if (flash) return { provider: route.id, model: flash.id }
     }
     for (const route of routes) {
       if (route.models.length) return { provider: route.id, model: route.models[0].id }
     }
+    this.lastWarning = error || '没有任何可用翻译路由'
     return null
   }
 
-  async describe() {
-    const [{ routes, error }, picked] = await Promise.all([this.listRoutes(), this.pickRoute()])
-    return { routes, picked, error: picked ? '' : (error || '没有任何可用翻译路由') }
+  async describe(force = false) {
+    const { routes, error } = await this.listRoutes(force)
+    const picked = await this.pickRoute(force, routes, error)
+    return {
+      routes,
+      picked,
+      requested: {
+        provider: String(this.config.mtProvider || ''),
+        model: String(this.config.mtModel || ''),
+      },
+      warning: this.lastWarning,
+      error: picked ? '' : (this.lastWarning || error || '没有任何可用翻译路由'),
+    }
   }
 
   buildPrompt(text, { brief = '', glossary = '', context = '', repair = '', partial = false } = {}) {

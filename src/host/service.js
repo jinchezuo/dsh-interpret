@@ -89,6 +89,7 @@ export class InterpretService {
     this.config = config
     this.log = createLogger('dsh-interpret')
     this.dataDir = resolveDataDir(config.dataDir)
+    this.mtWarning = ''
     this.asr = new AsrClient(ctx, config, this.log, this.dataDir)
     this.translator = new Translator(ctx, config, this.log)
     this.glossary = new Glossary(this.dataDir)
@@ -178,7 +179,16 @@ export class InterpretService {
   }
 
   async saveSettings(patch) {
+    const mtChanged = ['mtProvider', 'mtModel', 'autoTranslate'].some((key) => patch[key] !== undefined && String(patch[key] ?? '') !== String(this.config[key] ?? ''))
     this.applySettings(patch)
+    if (mtChanged) {
+      this.translator.invalidate()
+      if (this.config.autoTranslate) await this.refreshMtRoute(true)
+      else {
+        this.mtRoute = null
+        this.mtWarning = ''
+      }
+    }
     await writeFileAtomic(this.settingsPath, JSON.stringify({
       asrProvider: this.config.asrProvider,
       asrModelDir: this.config.asrModelDir,
@@ -436,6 +446,7 @@ export class InterpretService {
       },
       asr: this.asr.describe(),
       mt: this.mtRoute || null,
+      mtWarning: this.mtWarning,
       glossary: { count: this.glossary.entries.length },
       stats: this.statsView(),
       segmentCount: this.segments.length,
@@ -491,11 +502,11 @@ export class InterpretService {
     }
     this.streamingReady = streamingReady
     if (this.config.autoTranslate) {
-      const route = await this.translator.pickRoute(true)
+      const route = await this.refreshMtRoute(true)
       if (!route) throw Object.assign(new Error('没有可用的翻译模型路由，请检查 DSH 模型配置'), { code: 'MT_NO_ROUTE' })
-      this.mtRoute = { provider: route.provider, model: route.model }
     } else {
       this.mtRoute = null
+      this.mtWarning = ''
     }
     await mkdir(this.dataDir, { recursive: true }).catch(() => {})
     this.sessionId = nowStamp() + '-' + randomUUID().slice(0, 8)
@@ -1220,16 +1231,34 @@ export class InterpretService {
     return this.preparing
   }
 
+  async refreshMtRoute(force = true) {
+    const description = await this.translator.describe(force)
+    this.mtRoute = description.picked
+      ? { provider: description.picked.provider, model: description.picked.model }
+      : null
+    this.mtWarning = description.warning || ''
+    return this.mtRoute
+  }
+
+  async describeTranslation(force = true) {
+    const description = await this.translator.describe(force)
+    this.mtRoute = description.picked
+      ? { provider: description.picked.provider, model: description.picked.model }
+      : null
+    this.mtWarning = description.warning || ''
+    return description
+  }
+
   async ensureMtRoute() {
     if (!this.config.autoTranslate) {
       this.mtRoute = null
+      this.mtWarning = ''
       return null
     }
     if (this.mtRoute?.provider && this.mtRoute?.model) return this.mtRoute
-    const route = await this.translator.pickRoute(true)
-    this.mtRoute = route ? { provider: route.provider, model: route.model } : null
+    const route = await this.refreshMtRoute(true)
     this.emit('state', this.describe())
-    return this.mtRoute
+    return route
   }
 
   async listModels() {
@@ -1426,8 +1455,7 @@ export class InterpretService {
   }
 
   async translateText(text) {
-    const route = await this.translator.pickRoute(true)
-    this.mtRoute = route ? { provider: route.provider, model: route.model } : null
+    const route = await this.refreshMtRoute(true)
     return this.translator.translate(String(text || '').trim(), { route })
   }
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0 — 2026-11-19
+
+### Added
+
+- 设置栏新增「翻译模型」卡片：读取 DSH 已配置的 provider/model，支持自动、省钱优先、高质量、开源系快捷方案，并显示当前实际路由与失效回退警告。
+- 新增 `GET /translate/routes` 接口。
+
+### Changed
+
+- 保存 `mtProvider` / `mtModel` 后立即重新解析路由，不再沿用旧模型；已保存模型失效时回退并提示。
+- Windows CI 现在会额外生成 win32-x64 tarball artifact，便于在无 Windows 电脑时做包级验证。
+
 ## 1.1.2 — 2026-11-17
 
 ### Fixed

@@ -30,6 +30,7 @@
 - `GET /terminology/search?q=...`；
 - `POST /terminology/...`：术语库操作；
 - `GET /glossary`、`POST /glossary`、`POST /glossary/import`；
+- `GET /translate/routes`：列出 DSH 已配置的翻译路由、当前选择与回退警告；
 - `POST /translate`：试翻译。
 
 ## 讲义阅读器

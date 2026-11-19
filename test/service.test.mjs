@@ -212,3 +212,30 @@ test('session store lists, renames, exports and deletes a completed session', as
   await rm(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 })
 })
 
+test('saving a translation route refreshes the active model and reports fallbacks', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'dsh-interpret-'))
+  const { ctx } = fakeContext({ text: 'The eigenvalue decomposition is possible.', outputs: ['特征值分解是可能的。'] })
+  const service = new InterpretService(ctx, normalizeConfig({
+    dataDir: dir,
+    asrProvider: 'sensevoice-local',
+    liveTranslate: false,
+    systemAudio: 'off',
+    vadMode: 'energy',
+  }))
+  await service.settingsReady
+  const listed = await service.describeTranslation(true)
+  assert.equal(listed.picked.provider, 'deepseek-account')
+  assert.equal(listed.routes[0].models[0].id, 'deepseek-flash')
+
+  await service.saveSettings({ mtProvider: 'deepseek-account', mtModel: 'deepseek-flash' })
+  assert.equal(service.describe().mt.model, 'deepseek-flash')
+  assert.equal(service.describe().config.mtModel, 'deepseek-flash')
+
+  await service.saveSettings({ mtProvider: 'deepseek-account', mtModel: 'removed-model' })
+  assert.equal(service.describe().mt.model, 'deepseek-flash')
+  assert.match(service.describe().mtWarning, /不在当前 DSH 路由中/)
+
+  service.dispose()
+  await new Promise((resolve) => setTimeout(resolve, 150))
+  await rm(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 })
+})

@@ -20,6 +20,7 @@ const EMPTY = {
   history: null,
   historyView: null,
   models: null,
+  mtRoutes: null,
   glossaryBusy: false,
 }
 
@@ -143,6 +144,7 @@ export class Controller {
     this.loadGlossary()
     this.loadSessions()
     this.loadModels()
+    this.loadMtRoutes()
     // Committed captions are authoritative in the host. A slow poll keeps the
     // list correct even if the SSE connection is open but silent after a reload.
     this.startPolling(1800)
@@ -370,6 +372,7 @@ export class Controller {
     try {
       const payload = await this.request('/config', { method: 'POST', body: patch })
       await this.refresh()
+      await this.loadMtRoutes()
       return payload.data
     } catch (error) {
       this.update({ error: messageOf(error) })
@@ -388,6 +391,22 @@ export class Controller {
       this.update({ models: payload.data })
       return payload.data
     } catch {
+      return null
+    }
+  }
+
+  async loadMtRoutes() {
+    try {
+      const payload = await this.request('/translate/routes')
+      const state = this.snapshot.state
+      const enabled = state?.config?.autoTranslate !== false
+      this.update({
+        mtRoutes: payload.data,
+        state: state ? { ...state, mt: enabled ? payload.data.picked : null, mtWarning: enabled ? (payload.data.warning || '') : '' } : state,
+      })
+      return payload.data
+    } catch (error) {
+      this.update({ mtRoutes: { routes: [], picked: null, warning: '', error: messageOf(error) } })
       return null
     }
   }

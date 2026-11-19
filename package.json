@@ -1,6 +1,6 @@
 {
   "name": "dsh-interpret",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "DSH 实时英中同传字幕插件：麦克风/系统音频 → 本地 ASR → 术语化翻译 → 双语字幕，内置讲义阅读器",
   "repository": {
     "type": "git",

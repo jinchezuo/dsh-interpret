@@ -55,3 +55,46 @@ jobs:
       - run: node --test test/standalone.test.mjs
       - run: pnpm test
       - run: pnpm verify-package
+      - name: Pack Windows package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          pnpm pack --pack-destination release
+          $pkg = Get-ChildItem release/*.tgz | Select-Object -First 1
+          if (-not $pkg) { throw "pnpm pack produced no tarball" }
+          $stem = [System.IO.Path]::GetFileNameWithoutExtension($pkg.Name)
+          $target = Join-Path release ($stem + "-win32-x64.tgz")
+          Move-Item -LiteralPath $pkg.FullName -Destination $target
+      - name: Inspect Windows package
+        shell: pwsh
+        run: |
+          $pkg = Get-ChildItem release/*win32-x64.tgz | Select-Object -First 1
+          if (-not $pkg) { throw "Windows tarball not created" }
+          $entries = tar -tzf $pkg.FullName
+          $required = @(
+            "package/package.json",
+            "package/lib/client.js",
+            "package/src/host/api.js",
+            "package/src/host/translate.js",
+            "package/src/host/readers/render.py",
+            "package/assets/system-audio/win32-x64/dsh-asr-capture-system.exe"
+          )
+          foreach ($path in $required) {
+            if ($entries -notcontains $path) { throw "missing in Windows package: $path" }
+          }
+          $tmp = Join-Path $env:RUNNER_TEMP ("dsh-interpret-pkg-" + [guid]::NewGuid().ToString("N"))
+          New-Item -ItemType Directory -Force -Path $tmp | Out-Null
+          tar -xzf $pkg.FullName -C $tmp
+          $root = Join-Path $tmp "package"
+          $manifest = Get-Content (Join-Path $root "package.json") -Raw | ConvertFrom-Json
+          if ($manifest.version -ne "1.2.0") { throw "version mismatch: $($manifest.version)" }
+          $client = Get-Content (Join-Path $root "lib/client.js") -Raw
+          if ($client -notmatch "translate/routes") { throw "client bundle is missing translate/routes" }
+          $exe = Join-Path $root "assets/system-audio/win32-x64/dsh-asr-capture-system.exe"
+          $bytes = [System.IO.File]::ReadAllBytes($exe)
+          if ($bytes[0] -ne 0x4D -or $bytes[1] -ne 0x5A) { throw "Windows helper is not a PE executable" }
+          Get-FileHash $pkg.FullName -Algorithm SHA256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dsh-interpret-win32-x64
+          path: release/*win32-x64.tgz

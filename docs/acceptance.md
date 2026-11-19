@@ -1,15 +1,17 @@
-# 验收清单（1.1.2）
+# 验收清单（1.2.0）
 
 ## 自动化
 
 - [x] pnpm build
-- [x] pnpm test（30 项；无模型时模型测试跳过）
+- [x] pnpm test（38 项；无模型时模型测试跳过）
 - [x] pnpm verify-package
 - [x] node scripts/check-docs.mjs
 - [x] Windows CI 构建 WASAPI helper
 - [ ] Windows helper 实机采集验证
 - [x] tarball 包含 macOS helper、VAD、reader.py、client.js
-- [x] Windows tarball 包含 win32-x64 exe
+- [ ] Windows CI 生成并上传 win32-x64 artifact
+- [ ] Windows artifact 包含 win32-x64 exe、client.js、translate/routes
+- [ ] Windows artifact 的 client.js 与 Mac 构建哈希一致
 - [x] 临时 profile 只安装一个 tarball，npm 依赖自动安装
 
 ## macOS
